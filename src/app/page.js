@@ -1,9 +1,7 @@
-import LoginCard from '../components/LoginCard'
+import Image from 'next/image';
 
-export default function Page() {
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-100">
-    
-    </main>
-  )
+import LoginCard from '@/components/LoginCard';
+
+export default function Home() {
+  return <LoginCard />;
 }
