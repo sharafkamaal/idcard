@@ -1,8 +1,16 @@
-import {z} from "zod"
-export const usernameValidation = z.string().min(2, { message: "Username must be at least 2 characters" }).max(20, { message: "Username must not contain special characters" }).regex(/^[a-zA-Z0-9_]+$/, "Username must not contain special characters" )
-    
-    export const signUpSchema = z.object({
-        username: usernameValidation,
-        email: z.string().email({ message: "Invalid email address" }),
-        password: z.string().min(6, { message: "Password must be at least 6 characters" })
-    })
+import { z } from "zod";
+
+export const MessageSchema = z.object({
+  content: z
+    .string()
+    .min(1, "Message content is required")
+    .max(500, "Message content must be no more than 500 characters"),
+});
+
+export const MessageQuerySchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+});
+
+export type MessageInput = z.infer<typeof MessageSchema>;
+export type MessageQuery = z.infer<typeof MessageQuerySchema>;

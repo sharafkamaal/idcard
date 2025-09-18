@@ -6,6 +6,7 @@ export interface IMessage extends Document {
   createdAt: Date;
 }
 
+
 const MessageSchema: Schema<IMessage> = new Schema({
   content: {
     type: String,
