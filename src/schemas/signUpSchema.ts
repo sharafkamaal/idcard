@@ -21,4 +21,4 @@ export const verifySchema = z.object({
 
 // Type exports
 export type SignUpInput = z.infer<typeof signUpSchema>;
-export type VerifyInput = z.infer<typeof verifySchema>;
+export type VerifyInput = z.infer<typeof verifySchema>; 

@@ -2,7 +2,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
 import AuthProvider from "context/AuthProvider"; // ✅ import the client wrapper
-
+import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {

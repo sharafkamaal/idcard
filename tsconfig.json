@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "jsx": "preserve", // ✅ tells TS to allow JSX in .tsx
+    "jsx": "preserve",
     "jsxImportSource": "react",
     "module": "esnext",
     "target": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler", // ✅ modern, for Next.js
     "allowJs": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -29,9 +29,15 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "ignoreDeprecations": "6.0" // ✅ silences the warning until TS 7
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"], // ✅ include .tsx
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
   "exclude": [
     "node_modules"
   ]
