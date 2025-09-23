@@ -1,9 +1,0 @@
-.container {
-    padding: 1rem;
-}
-
-.loginForm {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}

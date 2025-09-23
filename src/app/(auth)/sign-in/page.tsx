@@ -21,7 +21,7 @@ export default function SignInPage() {
     // TODO: call your API here
     setTimeout(() => {
       setIsSubmitting(false)
-      router.push("/") // redirect after success
+      router.push("/dashboard") // redirect after success
     }, 1500)
   }
 

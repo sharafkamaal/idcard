@@ -4,7 +4,7 @@
     "jsxImportSource": "react",
     "module": "esnext",
     "target": "esnext",
-    "moduleResolution": "bundler", // ✅ modern, for Next.js
+    "moduleResolution": "bundler",
     "allowJs": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -29,8 +29,7 @@
       {
         "name": "next"
       }
-    ],
-    "ignoreDeprecations": "6.0" // ✅ silences the warning until TS 7
+    ]
   },
   "include": [
     "next-env.d.ts",
