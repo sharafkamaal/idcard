@@ -1,69 +1,71 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Eye, Edit, Users, GraduationCap, FileCheck, Clock } from 'lucide-react';
 import {
   PieChart,
   Pie,
   Cell,
+  Tooltip,
   LineChart,
   Line,
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
   BarChart,
   Bar,
-  Legend
+  ResponsiveContainer,
+  Legend,
 } from 'recharts';
+import { Users, GraduationCap, Clock, CheckCircle, Eye, Edit } from 'lucide-react';
 
-// Sample data for charts
+// Work Status Data for Pie Chart
 const workStatusData = [
-  { name: 'Approved', value: 45, color: '#10B981', className: 'bg-green-500' },
-  { name: 'Completed', value: 30, color: '#3B82F6', className: 'bg-blue-500' },
-  { name: 'Pending', value: 25, color: '#EF4444', className: 'bg-red-500' }
+  { name: 'Approved', value: 45, color: '#3B82F6' },
+  { name: 'Completed', value: 35, color: '#22C55E' },
+  { name: 'Pending', value: 20, color: '#EF4444' },
 ];
 
+// Printing Turnaround Time Data for Line Chart
 const printingTurnaroundData = [
-  { month: 'Jan', time: 65 },
-  { month: 'Feb', time: 59 },
-  { month: 'Mar', time: 80 },
-  { month: 'Apr', time: 81 },
-  { month: 'May', time: 56 },
-  { month: 'Jun', time: 55 },
-  { month: 'Jul', time: 40 },
-  { month: 'Aug', time: 65 },
-  { month: 'Sep', time: 59 },
-  { month: 'Oct', time: 80 },
-  { month: 'Nov', time: 81 },
-  { month: 'Dec', time: 56 }
+  { month: 'Jan', time: 12 },
+  { month: 'Feb', time: 15 },
+  { month: 'Mar', time: 8 },
+  { month: 'Apr', time: 18 },
+  { month: 'May', time: 14 },
+  { month: 'Jun', time: 10 },
+  { month: 'Jul', time: 16 },
+  { month: 'Aug', time: 12 },
+  { month: 'Sep', time: 9 },
+  { month: 'Oct', time: 13 },
+  { month: 'Nov', time: 11 },
+  { month: 'Dec', time: 14 },
 ];
 
+// Error/Rejected Entries Overview Data for Bar Chart
 const entriesOverviewData = [
-  { month: 'Jan', invalid: 20, missing: 15, incomplete: 10 },
-  { month: 'Feb', invalid: 25, missing: 18, incomplete: 12 },
-  { month: 'Mar', invalid: 30, missing: 20, incomplete: 15 },
-  { month: 'Apr', invalid: 22, missing: 16, incomplete: 11 },
-  { month: 'May', invalid: 28, missing: 19, incomplete: 14 },
-  { month: 'Jun', invalid: 35, missing: 22, incomplete: 18 },
-  { month: 'Jul', invalid: 32, missing: 21, incomplete: 16 },
-  { month: 'Aug', invalid: 29, missing: 18, incomplete: 13 },
-  { month: 'Sep', invalid: 26, missing: 17, incomplete: 12 },
-  { month: 'Oct', invalid: 31, missing: 20, incomplete: 15 },
-  { month: 'Nov', invalid: 33, missing: 21, incomplete: 17 },
-  { month: 'Dec', invalid: 27, missing: 18, incomplete: 14 }
+  { month: 'Jan', invalid: 12, missing: 8, incomplete: 5 },
+  { month: 'Feb', invalid: 15, missing: 10, incomplete: 7 },
+  { month: 'Mar', invalid: 8, missing: 6, incomplete: 4 },
+  { month: 'Apr', invalid: 18, missing: 12, incomplete: 9 },
+  { month: 'May', invalid: 14, missing: 9, incomplete: 6 },
+  { month: 'Jun', invalid: 10, missing: 7, incomplete: 5 },
 ];
 
+// Student Requests Data for Table
 const studentRequestsData = [
   {
     id: 1,
     date: '04-08-2025',
     verifiedBatch: true,
     schoolName: 'Canadian International School',
-    studentName: 'Neil Matthews',
+    studentName: 'Neel Madhave',
     schoolLocation: 'Cambodia',
     status: 'Completed',
     statusColor: 'bg-green-100 text-green-800'
@@ -73,9 +75,9 @@ const studentRequestsData = [
     date: '04-08-2025',
     verifiedBatch: true,
     schoolName: 'Canadian International School',
-    studentName: 'Jamal Burnett',
+    studentName: 'Jamiul Burnett',
     schoolLocation: 'Cambodia',
-    status: 'Declined',
+    status: 'Pending',
     statusColor: 'bg-red-100 text-red-800'
   },
   {
@@ -96,7 +98,7 @@ const studentRequestsData = [
     studentName: 'Barry Dick',
     schoolLocation: 'Cambodia',
     status: 'Pending',
-    statusColor: 'bg-yellow-100 text-yellow-800'
+    statusColor: 'bg-red-100 text-red-800'
   },
   {
     id: 5,
@@ -117,35 +119,35 @@ const studentRequestsData = [
     schoolLocation: 'Cambodia',
     status: 'Completed',
     statusColor: 'bg-green-100 text-green-800'
-  }
+  },
 ];
 
 export default function Dashboard() {
   return (
-    <div className="space-y-6">
+    <div className="dashboard-container">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
+      <div className="dashboard-header">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">DASHBOARDS</h1>
-          <p className="text-sm text-gray-500 mt-1">School Branches</p>
+          <h1 className="dashboard-title">DASHBOARDS</h1>
+          <p className="dashboard-subtitle">School Branches</p>
         </div>
-        <div className="flex items-center space-x-2 text-sm text-gray-500">
+        <div className="breadcrumb">
           <span>Dashboards</span>
           <span>/</span>
-          <span className="text-gray-900">Dashboards</span>
+          <span className="breadcrumb-current">Dashboards</span>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="kpi-grid">
         <Card>
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+            <div className="kpi-card-content">
               <div>
-                <p className="text-sm font-medium text-gray-600">Students Register</p>
-                <p className="text-2xl font-bold text-gray-900">1,235</p>
+                <p className="kpi-label">Students Register</p>
+                <p className="kpi-value">1,235</p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="kpi-icon kpi-icon-blue">
                 <Users className="w-6 h-6 text-blue-600" />
               </div>
             </div>
@@ -154,12 +156,12 @@ export default function Dashboard() {
 
         <Card>
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+            <div className="kpi-card-content">
               <div>
-                <p className="text-sm font-medium text-gray-600">Export Submit Printing</p>
-                <p className="text-2xl font-bold text-gray-900">35,723</p>
+                <p className="kpi-label">Export Submit Printing</p>
+                <p className="kpi-value">35,723</p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="kpi-icon kpi-icon-blue">
                 <GraduationCap className="w-6 h-6 text-blue-600" />
               </div>
             </div>
@@ -168,12 +170,12 @@ export default function Dashboard() {
 
         <Card>
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+            <div className="kpi-card-content">
               <div>
-                <p className="text-sm font-medium text-gray-600">Pending Verification</p>
-                <p className="text-2xl font-bold text-gray-900">1000</p>
+                <p className="kpi-label">Pending Verification</p>
+                <p className="kpi-value">1000</p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="kpi-icon kpi-icon-blue">
                 <Clock className="w-6 h-6 text-blue-600" />
               </div>
             </div>
@@ -182,28 +184,28 @@ export default function Dashboard() {
 
         <Card>
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+            <div className="kpi-card-content">
               <div>
-                <p className="text-sm font-medium text-gray-600">Completed Printing</p>
-                <p className="text-2xl font-bold text-gray-900">1000</p>
+                <p className="kpi-label">Completed Printing</p>
+                <p className="kpi-value">1000</p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <FileCheck className="w-6 h-6 text-blue-600" />
+              <div className="kpi-icon kpi-icon-blue">
+                <CheckCircle className="w-6 h-6 text-blue-600" />
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Charts Section */}
+      <div className="charts-grid">
         {/* Work Status Pie Chart */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Work Status</CardTitle>
+            <CardTitle className="chart-title">Work Status</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64">
+            <div className="chart-container">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -223,16 +225,20 @@ export default function Dashboard() {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="mt-4 space-y-2">
+            <div className="chart-legend">
               {workStatusData.map((item, index) => (
-                <div key={index} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center">
-                    <div 
-                      className={`w-3 h-3 rounded-full mr-2 ${item.className}`}
+                <div key={index} className="legend-item">
+                  <div className="legend-item-content">
+                    <div
+                      className={`legend-indicator ${
+                        item.name === 'Approved' ? 'legend-approved' :
+                        item.name === 'Completed' ? 'legend-completed' :
+                        'legend-pending'
+                      }`}
                     ></div>
                     <span>{item.name}</span>
                   </div>
-                  <span className="font-medium">{item.value}%</span>
+                  <span className="legend-value">{item.value}%</span>
                 </div>
               ))}
             </div>
@@ -242,10 +248,10 @@ export default function Dashboard() {
         {/* Printing Turnaround Time Line Chart */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Printing Turnaround Time</CardTitle>
+            <CardTitle className="chart-title">Printing Turnaround Time</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64">
+            <div className="chart-container">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={printingTurnaroundData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -268,10 +274,10 @@ export default function Dashboard() {
         {/* Error/Rejected Entries Overview Bar Chart */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Error/Rejected Entries Overview</CardTitle>
+            <CardTitle className="chart-title">Error/Rejected Entries Overview</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64">
+            <div className="chart-container">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={entriesOverviewData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -279,9 +285,9 @@ export default function Dashboard() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="invalid" stackId="a" fill="#3B82F6" name="Invalid Entries" />
-                  <Bar dataKey="missing" stackId="a" fill="#F59E0B" name="Missing Photo" />
-                  <Bar dataKey="incomplete" stackId="a" fill="#EF4444" name="Incomplete Fields" />
+                  <Bar dataKey="invalid" fill="#EF4444" name="Invalid Entries" />
+                  <Bar dataKey="missing" fill="#F59E0B" name="Missing Entries" />
+                  <Bar dataKey="incomplete" fill="#3B82F6" name="Incomplete Entries" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -292,59 +298,41 @@ export default function Dashboard() {
       {/* Student Requests Table */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">Latest Student Requests & Status Overview</CardTitle>
+          <CardTitle className="chart-title">Student Requests</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">#</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Date</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Verified Batch</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">School Name</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Student name</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">School Location</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Status</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Action</th>
+                <tr className="border-b">
+                  <th className="text-left p-4 font-medium text-gray-600">ID</th>
+                  <th className="text-left p-4 font-medium text-gray-600">Date</th>
+                  <th className="text-left p-4 font-medium text-gray-600">School Name</th>
+                  <th className="text-left p-4 font-medium text-gray-600">Student Name</th>
+                  <th className="text-left p-4 font-medium text-gray-600">Location</th>
+                  <th className="text-left p-4 font-medium text-gray-600">Status</th>
+                  <th className="text-left p-4 font-medium text-gray-600">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {studentRequestsData.map((request) => (
-                  <tr key={request.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4">
-                      <label className="sr-only" htmlFor={`checkbox-${request.id}`}>
-                        Select row {request.id}
-                      </label>
-                      <input 
-                        type="checkbox" 
-                        id={`checkbox-${request.id}`}
-                        className="rounded border-gray-300" 
-                        aria-label={`Select request for ${request.studentName}`}
-                      />
-                    </td>
-                    <td className="py-3 px-4 text-sm text-gray-900">{request.date}</td>
-                    <td className="py-3 px-4">
-                      {request.verifiedBatch && (
-                        <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
-                          <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
-                        </div>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-gray-900">{request.schoolName}</td>
-                    <td className="py-3 px-4 text-sm text-gray-900">{request.studentName}</td>
-                    <td className="py-3 px-4 text-sm text-gray-900">{request.schoolLocation}</td>
-                    <td className="py-3 px-4">
-                      <Badge className={`${request.statusColor} border-0`}>
+                  <tr key={request.id} className="border-b hover:bg-gray-50">
+                    <td className="p-4">{request.id}</td>
+                    <td className="p-4">{request.date}</td>
+                    <td className="p-4">{request.schoolName}</td>
+                    <td className="p-4">{request.studentName}</td>
+                    <td className="p-4">{request.schoolLocation}</td>
+                    <td className="p-4">
+                      <Badge className={request.statusColor}>
                         {request.status}
                       </Badge>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="p-4">
                       <div className="flex space-x-2">
-                        <Button variant="ghost" size="sm">
+                        <Button variant="outline" size="sm">
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="sm">
+                        <Button variant="outline" size="sm">
                           <Edit className="w-4 h-4" />
                         </Button>
                       </div>

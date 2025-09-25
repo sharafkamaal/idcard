@@ -69,8 +69,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    min-height: 100vh;     /* ensures full screen height */
-    overflow-x: hidden;    /* 🚫 fixes side scroll */
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 }
 
@@ -98,5 +98,106 @@
 
   .legend-pending {
     background-color: #EF4444;
+  }
+
+  /* Dashboard specific styles */
+  .dashboard-container {
+    @apply space-y-6;
+  }
+
+  .dashboard-header {
+    @apply flex items-center justify-between;
+  }
+
+  .dashboard-title {
+    @apply text-2xl font-bold text-gray-900;
+  }
+
+  .dashboard-subtitle {
+    @apply text-sm text-gray-500 mt-1;
+  }
+
+  .breadcrumb {
+    @apply flex items-center space-x-2 text-sm text-gray-500;
+  }
+
+  .breadcrumb-current {
+    @apply text-gray-900 font-medium;
+  }
+
+  .kpi-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
+  }
+
+  .kpi-card-content {
+    @apply flex items-center justify-between;
+  }
+
+  .kpi-label {
+    @apply text-sm font-medium text-gray-600;
+  }
+
+  .kpi-value {
+    @apply text-2xl font-bold text-gray-900 mt-1;
+  }
+
+  .kpi-icon {
+    @apply w-12 h-12 rounded-lg flex items-center justify-center;
+  }
+
+  .kpi-icon-blue {
+    @apply bg-blue-100;
+  }
+
+  .charts-grid {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-6;
+  }
+
+  .chart-title {
+    @apply text-lg font-semibold text-gray-900;
+  }
+
+  .chart-container {
+    @apply h-64 w-full;
+  }
+
+  .chart-legend {
+    @apply mt-4 space-y-2;
+  }
+
+  .legend-item {
+    @apply flex items-center justify-between text-sm;
+  }
+
+  .legend-item-content {
+    @apply flex items-center;
+  }
+
+  .legend-indicator {
+    @apply w-3 h-3 rounded-full mr-2;
+  }
+
+  .legend-value {
+    @apply font-medium text-gray-900;
+  }
+
+  .table-container {
+    @apply overflow-x-auto;
+  }
+
+  .table-header {
+    @apply flex items-center justify-between mb-4;
+  }
+
+  .table-title {
+    @apply text-lg font-semibold text-gray-900;
+  }
+
+  .table-actions {
+    @apply flex items-center space-x-2;
+  }
+
+  .status-badge {
+    @apply px-2 py-1 rounded-full text-xs font-medium;
   }
 }
