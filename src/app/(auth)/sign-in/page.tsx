@@ -1,28 +1,60 @@
-"use client"
+'use client'
 
+import { signIn } from "next-auth/react"
+import { Label } from "@/components/ui/label"
+import Link from "next/link"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import { Loader2 } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
 
 export default function SignInPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState("")
+  const [formData, setFormData] = useState({
+    identifier: "",
+    password: "",
+    remember: false
+  })
   const router = useRouter()
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }))
+    // Clear error when user starts typing
+    if (error) setError("")
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setError("")
 
-    // TODO: call your API here
-    setTimeout(() => {
+    try {
+      const result = await signIn('credentials', {
+        identifier: formData.identifier,
+        password: formData.password,
+        redirect: false,
+      })
+
+      if (result?.error) {
+        setError(result.error)
+      } else if (result?.ok) {
+        // Successful login - redirect to dashboard
+        router.push('/dashboard')
+        router.refresh() // Refresh to update session
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      setError("An unexpected error occurred")
+    } finally {
       setIsSubmitting(false)
-      router.push("/dashboard") // redirect after success
-    }, 1500)
+    }
   }
 
   return (
@@ -41,7 +73,7 @@ export default function SignInPage() {
         <div className="w-full max-w-md space-y-6">
           {/* Logo */}
           <div>
-            <h1 className="text-2xl font-bold text-blue-600">Wezant*</h1>
+            <h1 className="text-2xl font-bold text-blue-600">True Feedback</h1>
           </div>
 
           {/* Welcome message */}
@@ -50,16 +82,30 @@ export default function SignInPage() {
               Welcome Back !
             </h2>
             <p className="text-sm text-gray-500">
-              Sign in to continue to Wezant.
+              Sign in to continue to True Feedback.
             </p>
           </div>
 
+          {/* Error message */}
+          {error && (
+            <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+              {error}
+            </div>
+          )}
+
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Username */}
+            {/* Username/Email */}
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input id="username" placeholder="Enter username" required />
+              <Label htmlFor="identifier">Username or Email</Label>
+              <Input
+                id="identifier"
+                name="identifier"
+                placeholder="Enter username or email"
+                value={formData.identifier}
+                onChange={handleInputChange}
+                required
+              />
             </div>
 
             {/* Password */}
@@ -67,15 +113,25 @@ export default function SignInPage() {
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
+                name="password"
                 type="password"
                 placeholder="Enter password"
+                value={formData.password}
+                onChange={handleInputChange}
                 required
               />
             </div>
 
             {/* Remember me */}
             <div className="flex items-center space-x-2">
-              <Checkbox id="remember" />
+              <Checkbox
+                id="remember"
+                name="remember"
+                checked={formData.remember}
+                onCheckedChange={(checked) =>
+                  setFormData(prev => ({ ...prev, remember: checked as boolean }))
+                }
+              />
               <Label htmlFor="remember" className="text-sm">
                 Remember me
               </Label>
@@ -98,33 +154,24 @@ export default function SignInPage() {
             </Button>
           </form>
 
-          {/* Social login */}
-          <div className="text-center space-y-3">
-            <p className="text-sm text-gray-600">Sign in with</p>
-            <div className="flex justify-center space-x-4">
-              <button className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center">
-                f
-              </button>
-              <button className="w-9 h-9 rounded-full bg-sky-400 text-white flex items-center justify-center">
-                t
-              </button>
-              <button className="w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center">
-                G
-              </button>
-            </div>
+          {/* Forgot password */}
+          <div className="text-center">
+            <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+              Forgot your password?
+            </Link>
           </div>
 
           {/* Signup link */}
           <p className="text-center text-sm text-gray-600">
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <Link href="/sign-up" className="text-blue-600 hover:underline">
-              Signup now
+              Sign up now
             </Link>
           </p>
 
           {/* Footer */}
           <div className="text-center text-xs text-gray-500 mt-8">
-            © 2025 Wezant Crafted with ❤️ by Zenoids
+            © 2025 True Feedback. All rights reserved.
           </div>
         </div>
       </div>

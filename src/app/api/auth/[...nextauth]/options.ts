@@ -10,35 +10,49 @@ export const authOptions: NextAuthOptions = {
       id: 'credentials',
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'text' },
+        identifier: { label: 'Username or Email', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials: any): Promise<any> {
         await dbConnect();
         try {
+          if (!credentials?.identifier || !credentials?.password) {
+            throw new Error('Please provide both username/email and password');
+          }
+
           const user = await UserModel.findOne({
             $or: [
               { email: credentials.identifier },
               { username: credentials.identifier },
             ],
           });
+
           if (!user) {
-            throw new Error('No user found with this email');
+            throw new Error('No user found with this email or username');
           }
+
           if (!user.isVerified) {
             throw new Error('Please verify your account before logging in');
           }
+
           const isPasswordCorrect = await bcrypt.compare(
             credentials.password,
             user.password
           );
+
           if (isPasswordCorrect) {
-            return user;
+            return {
+              _id: user._id,
+              email: user.email,
+              username: user.username,
+              isVerified: user.isVerified,
+              isAcceptingMessages: user.isAcceptingMessage,
+            };
           } else {
             throw new Error('Incorrect password');
           }
         } catch (err: any) {
-          throw new Error(err);
+          throw new Error(err.message || 'Authentication failed');
         }
       },
     }),
@@ -46,7 +60,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token._id = user._id?.toString(); // Convert ObjectId to string
+        token._id = user._id?.toString();
         token.isVerified = user.isVerified;
         token.isAcceptingMessages = user.isAcceptingMessages;
         token.username = user.username;

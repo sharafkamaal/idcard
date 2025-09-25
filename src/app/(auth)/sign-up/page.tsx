@@ -1,21 +1,11 @@
-"use client"
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { useDebounceValue } from "usehooks-ts"
-import axios, { AxiosError } from "axios"
-import Link from "next/link"
-import { Loader2 } from "lucide-react"
-
-import { signUpSchema } from "@/schemas/signUpSchema"
-import { ApiResponse } from "@/types/ApiResponse"
 import { useToast } from "@/hooks/use-toast"
-import { Toaster } from "@/components/ui/toaster"
-
-// shadcn/ui components
+import { useRouter } from "next/navigation"
+import { Loader2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { signUpSchema } from "@/schemas/signUpSchema"
+import { useEffect, useState } from "react"
 import {
   Form,
   FormField,
@@ -25,8 +15,15 @@ import {
   FormDescription,
   FormMessage,
 } from "@/components/ui/form"
+import Link from "next/link"
+import { useDebounceValue } from "usehooks-ts"
+import axios, { AxiosError } from "axios"
+import { ApiResponse } from "@/types/ApiResponse"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import { Toaster } from "@/components/ui/toaster"
 
 const Page = () => {
   const [username, setUsername] = useState("")
@@ -34,7 +31,8 @@ const Page = () => {
   const [isCheckingUsername, setIsCheckingUsername] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const debouncedUsername = useDebounceValue(username, 300)
+  // Fix the debounce usage
+  const [debouncedUsername] = useDebounceValue(username, 300)
   const { toast } = useToast()
   const router = useRouter()
 
@@ -51,13 +49,17 @@ const Page = () => {
   // check username availability
   useEffect(() => {
     const checkUsernameUnique = async () => {
-      if (!debouncedUsername) return
+      if (!debouncedUsername || debouncedUsername.length < 2) {
+        setUserMessage("")
+        return
+      }
+      
       setIsCheckingUsername(true)
       setUserMessage("")
 
       try {
         const response = await axios.get<ApiResponse>(
-          `/api/check-username-unique?username=${debouncedUsername}`
+          `/api/check-username-unique?username=${encodeURIComponent(debouncedUsername)}`
         )
         setUserMessage(response.data.message)
       } catch (error) {

@@ -1,8 +1,8 @@
-import { IMessage } from "@/models/user"; // ✅ make sure your model exports Message
+import { Message } from "@/models/User";
 
 export interface ApiResponse {
   success: boolean;
-  message: string; // main message for status
-  isAcceptingMessage?: boolean; // optional boolean
-  messages?: Array<IMessage>;    // optional array of Message objects
+  message: string;
+  isAcceptingMessages?: boolean; // Changed from isAcceptingMessage to isAcceptingMessages
+  messages?: Array<Message>;
 }

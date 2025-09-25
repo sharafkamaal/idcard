@@ -1,37 +1,52 @@
 'use client';
 
+import { Input } from '@/components/ui/input';
+import { useParams, useRouter } from 'next/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
+import { ApiResponse } from '@/types/ApiResponse';
+import axios, { AxiosError } from 'axios';
+import { verifySchema } from '@/schemas/verifySchema';
 import {
   Form,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
+  FormControl,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
-import { ApiResponse } from '@/types/ApiResponse';
-import { zodResolver } from '@hookform/resolvers/zod';
-import axios, { AxiosError } from 'axios';
-import { useParams, useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import * as z from 'zod';
-import { verifySchema } from '@/schemas/verifySchema';
 
 export default function VerifyAccount() {
   const router = useRouter();
   const params = useParams<{ username: string }>();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const form = useForm<z.infer<typeof verifySchema>>({
     resolver: zodResolver(verifySchema),
+    defaultValues: {
+      code: '',
+    },
   });
 
   const onSubmit = async (data: z.infer<typeof verifySchema>) => {
+    console.log('🔄 Submitting verification code:', data.code);
+    console.log('👤 Username from params:', params.username);
+    
+    setIsSubmitting(true);
+    
     try {
       const response = await axios.post<ApiResponse>(`/api/verify-code`, {
         username: params.username,
         code: data.code,
       });
+
+      console.log('✅ Verification successful:', response.data);
 
       toast({
         title: 'Success',
@@ -40,6 +55,8 @@ export default function VerifyAccount() {
 
       router.replace('/sign-in');
     } catch (error) {
+      console.error('❌ Verification failed:', error);
+      
       const axiosError = error as AxiosError<ApiResponse>;
       toast({
         title: 'Verification Failed',
@@ -48,6 +65,8 @@ export default function VerifyAccount() {
           'An error occurred. Please try again.',
         variant: 'destructive',
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -59,7 +78,9 @@ export default function VerifyAccount() {
             Verify Your Account
           </h1>
           <p className="mb-4">Enter the verification code sent to your email</p>
+          <p className="text-sm text-gray-600">Username: {params.username}</p>
         </div>
+        
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
@@ -68,14 +89,53 @@ export default function VerifyAccount() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Verification Code</FormLabel>
-                  <Input {...field} />
+                  <FormControl>
+                    <Input 
+                      {...field} 
+                      placeholder="Enter 6-digit code"
+                      maxLength={6}
+                      className="text-center text-lg tracking-widest"
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Verify</Button>
+            
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Verifying...
+                </>
+              ) : (
+                'Verify Account'
+              )}
+            </Button>
           </form>
         </Form>
+        
+        <div className="text-center">
+          <p className="text-sm text-gray-600">
+            Didn't receive the code?{' '}
+            <button 
+              onClick={() => {
+                // You can add resend functionality here later
+                toast({
+                  title: 'Info',
+                  description: 'Please check your spam folder or try signing up again.',
+                });
+              }}
+              className="text-blue-600 hover:underline"
+            >
+              Resend Code
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );
