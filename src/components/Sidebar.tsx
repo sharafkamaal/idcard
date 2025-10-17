@@ -14,7 +14,8 @@ import {
   ChevronRight,
   Plus,
   List,
-  Eye
+  Eye,
+  Edit
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -47,15 +48,14 @@ const navigation: NavigationItem[] = [
     subItems: [
       { name: 'Add School', href: '/manage-school/add-school', icon: Plus },
       { name: 'List Schools', href: '/manage-school/list-school', icon: List },
-      { name: 'View School', href: '/manage-school/view', icon: Eye },
     ],
   },
   {
     name: 'Manage Students',
     icon: Users,
     subItems: [
-      { name: 'Add Student', href: '/manage-students/add', icon: Plus },
-      { name: 'List Students', href: '/manage-students/list', icon: List },
+      { name: 'Add Student', href: '/manage-students/add-students', icon: Plus },
+      { name: 'List Students', href: '/manage-students/list-students', icon: List },
     ],
   },
   { name: 'Reports', href: '/reports', icon: FileText },
@@ -65,7 +65,7 @@ const navigation: NavigationItem[] = [
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const [expandedItems, setExpandedItems] = useState<string[]>(['Manage Schools']);
+  const [expandedItems, setExpandedItems] = useState<string[]>(['Manage Schools', 'Manage Students']);
 
   const toggleExpanded = (itemName: string) => {
     setExpandedItems(prev =>
@@ -91,9 +91,15 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   };
 
   const isSubItemActive = (href: string) => {
-    // Handle dynamic routes like /manage-school/view/[id]
+    // Handle dynamic routes
     if (href === '/manage-school/view') {
       return pathname?.startsWith('/manage-school/view');
+    }
+    if (href === '/manage-school/edit') {
+      return pathname?.startsWith('/manage-school/edit');
+    }
+    if (href === '/manage-students/list') {
+      return pathname?.startsWith('/manage-students/list');
     }
     return pathname === href;
   };

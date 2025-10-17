@@ -9,88 +9,73 @@ datasource db {
 }
 
 model School {
-  id                   String  @id @default(auto()) @map("_id") @db.ObjectId
-  schoolType           String // "single" or "multiBranch"
-  schoolName           String
-  phoneNo              String?
-  altPhoneNo           String?
-  address              String?
-  city                 String?
-  state                String?
-  pinCode              String?
-  schoolPointOfContact String?
-  pointOfContactPhone  String?
-  status               String  @default("active") // "active" or "inactive"
-  verified             Boolean @default(false)
-  logoUrl              String?
-  qrCode               String?
-  idCardDesignUrl      String?
-
-  // Permissions
-  selectLayoutOfIdCard String? // "vertical_id" or "horizontal_id"
-  sessionDisplayOnCard Boolean @default(true)
-  pdfDownloadAccess    Boolean @default(true) // "Enable" or "Disable"
-  idCardsNoType        String  @default("Roll No") // "Roll No" or "Admission No"
-  session              String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relation fields (opposite side)
-  students Student[] @relation("SchoolStudents")
-  batches  Batch[]   @relation("SchoolBatches")
+  id                      String    @id @default(auto()) @map("_id") @db.ObjectId
+  schoolType              String
+  schoolName              String
+  phoneNo                 String?
+  altPhoneNo              String?
+  address                 String?
+  city                    String?
+  state                   String?
+  pinCode                 String?
+  schoolPointOfContact    String?
+  pointOfContactPhone     String?
+  status                  String    @default("active")
+  verified                Boolean   @default(false)
+  logoUrl                 String?
+  qrCode                  String?
+  idCardDesignUrl         String?
+  selectLayoutOfIdCard    String    @default("vertical_id")
+  sessionDisplayOnCard    Boolean   @default(true)
+  pdfDownloadAccess       Boolean   @default(true)
+  idCardsNoType           String    @default("Roll No")
+  session                 String?
+  email                   String?
+  website                 String?
+  code                    String?
+  term                    String?
+  students                Student[] // Add this relation
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
 
   @@map("schools")
 }
 
 model Student {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  studentName String
-  rollNo      String?
-  admissionNo String?
-  class       String?
-  section     String?
-  dateOfBirth DateTime?
-  fatherName  String?
-  motherName  String?
-  address     String?
-  phoneNo     String?
-  email       String?
-  photoUrl    String?
-  bloodGroup  String?
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  firstName         String
+  lastName          String
+  fatherName        String?
+  email             String?
+  phone             String?
+  dob               DateTime?
+  gender            Gender
+  bloodGroup        String?
+  rollNumber        String
+  class             String
+  section           String?
+  parentGuardianName String?
+  parentPhone       String?
+  photoUrl          String?
+  qrCode            String?
+  status            Status   @default(ACTIVE)
+  verified          Boolean  @default(false)
+  schoolId          String   @db.ObjectId
+  school            School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  // Relation to School
-  schoolId String @db.ObjectId
-  school   School @relation("SchoolStudents", fields: [schoolId], references: [id], onDelete: Cascade)
-
-  // Relation to Batch
-  batchId String? @db.ObjectId
-  batch   Batch?  @relation(fields: [batchId], references: [id], onDelete: SetNull)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  @@unique([schoolId, rollNumber])
   @@map("students")
 }
 
-model Batch {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  batchName    String
-  class        String
-  section      String?
-  academicYear String
-  startDate    DateTime?
-  endDate      DateTime?
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
 
-  // Relation to School
-  schoolId String @db.ObjectId
-  school   School @relation("SchoolBatches", fields: [schoolId], references: [id], onDelete: Cascade)
-
-  // Relation to Students
-  students Student[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("batches")
+enum Status {
+  ACTIVE
+  INACTIVE
 }

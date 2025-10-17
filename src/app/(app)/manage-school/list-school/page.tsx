@@ -1,424 +1,250 @@
+// src/app/(app)/manage-school/list-school/page.tsx
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-    School,
-    SchoolStatus,
-    SchoolType,
-} from '@/types/school';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import {
-    ChevronDown,
-    ChevronLeft,
-    ChevronRight,
-    Eye,
-    Filter,
-    Loader2,
-    Pencil,
-    Plus,
-    RefreshCw,
-    Search,
-    Trash2,
-} from 'lucide-react';
+import { Eye, Edit, Trash2, AlertCircle } from 'lucide-react';
 
-interface SchoolWithMetrics extends School {
-    _count?: {
-        students: number;
-    };
+interface School {
+  id: string;
+  schoolName: string;
+  schoolType: string;
+  phoneNo?: string;
+  city?: string;
+  state?: string;
+  status: string;
+  verified: boolean;
+  session?: string;
+  createdAt: string;
 }
-
-interface PaginatedResponse {
-    schools: SchoolWithMetrics[];
-    pagination: {
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
-    };
-}
-
-const statusBadges: Record<SchoolStatus, string> = {
-    ACTIVE: 'bg-emerald-100 text-emerald-700 border border-emerald-200',
-    INACTIVE: 'bg-red-100 text-red-700 border border-red-200',
-    VERIFIED: 'bg-blue-100 text-blue-700 border border-blue-200',
-};
-
-const typeLabels: Record<SchoolType, string> = {
-    SINGLE: 'Single Branch',
-    MULTI_BRANCH: 'Multi Branch',
-};
-
-const statusOptions: { label: string; value: SchoolStatus | 'ALL' }[] = [
-    { label: 'All Statuses', value: 'ALL' },
-    { label: 'Active', value: 'ACTIVE' },
-    { label: 'Inactive', value: 'INACTIVE' },
-    { label: 'Verified', value: 'VERIFIED' },
-];
 
 export default function ListSchoolPage() {
-    const router = useRouter();
-    const { toast } = useToast();
+  const router = useRouter();
+  const [schools, setSchools] = useState<School[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-    const [schools, setSchools] = useState<SchoolWithMetrics[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+  const fetchSchools = async () => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      const response = await fetch('/api/schools');
+      const data = await response.json();
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [debouncedSearch, setDebouncedSearch] = useState('');
-    const [statusFilter, setStatusFilter] = useState<SchoolStatus | 'ALL'>('ALL');
-    const [page, setPage] = useState(1);
-    const [limit] = useState(10);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalResults, setTotalResults] = useState(0);
+      if (data.success) {
+        setSchools(data.data);
+      } else {
+        setError(data.error || 'Failed to fetch schools');
+      }
+    } catch (err) {
+      console.error('Error fetching schools:', err);
+      setError('Unable to fetch schools, please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    useEffect(() => {
-        const handler = setTimeout(() => setDebouncedSearch(searchTerm), 400);
-        return () => clearTimeout(handler);
-    }, [searchTerm]);
+  useEffect(() => {
+    fetchSchools();
+  }, []);
 
-    const fetchSchools = useCallback(async () => {
-        try {
-            setLoading(true);
-            setError(null);
+  const handleDelete = async (id: string, schoolName: string) => {
+    if (!confirm(`Are you sure you want to delete "${schoolName}"?`)) {
+      return;
+    }
 
-            const params = new URLSearchParams({
-                page: page.toString(),
-                limit: limit.toString(),
-            });
+    try {
+      const response = await fetch(`/api/schools/${id}`, {
+        method: 'DELETE',
+      });
 
-            if (debouncedSearch.trim()) {
-                params.set('search', debouncedSearch.trim());
-            }
+      const data = await response.json();
+      
+      if (data.success) {
+        setSchools(schools.filter(school => school.id !== id));
+        alert('School deleted successfully!');
+      } else {
+        alert('Error: ' + data.error);
+      }
+    } catch (error) {
+      console.error('Error deleting school:', error);
+      alert('Failed to delete school');
+    }
+  };
 
-            if (statusFilter !== 'ALL') {
-                params.set('status', statusFilter);
-            }
-
-            const response = await fetch(`/api/school?${params.toString()}`);
-            if (!response.ok) {
-                throw new Error('Unable to fetch schools, please try again.');
-            }
-
-            const data: PaginatedResponse = await response.json();
-            setSchools(data.schools);
-            setTotalPages(data.pagination.totalPages);
-            setTotalResults(data.pagination.total);
-        } catch (err: any) {
-            setError(err.message || 'Failed to load schools.');
-            toast({
-                title: 'Error',
-                description: err.message || 'Failed to load schools.',
-                variant: 'destructive',
-            });
-        } finally {
-            setLoading(false);
-        }
-    }, [debouncedSearch, limit, page, statusFilter, toast]);
-
-    useEffect(() => {
-        fetchSchools();
-    }, [fetchSchools]);
-
-    const handleDelete = useCallback(
-        async (schoolId: string) => {
-            const confirmed = window.confirm('Are you sure you want to delete this school? This action cannot be undone.');
-            if (!confirmed) return;
-
-            try {
-                const response = await fetch(`/api/school/${schoolId}`, {
-                    method: 'DELETE',
-                });
-
-                if (!response.ok) {
-                    throw new Error('Unable to delete school, please try again.');
-                }
-
-                toast({
-                    title: 'Deleted',
-                    description: 'School deleted successfully.',
-                });
-
-                fetchSchools();
-            } catch (err: any) {
-                toast({
-                    title: 'Error',
-                    description: err.message || 'Failed to delete school.',
-                    variant: 'destructive',
-                });
-            }
-        },
-        [fetchSchools, toast]
-    );
-
-    const resetFilters = () => {
-        setSearchTerm('');
-        setStatusFilter('ALL');
-        setPage(1);
-    };
-
-    useEffect(() => {
-        if (statusFilter === 'ALL' && !debouncedSearch) return;
-        setPage(1);
-    }, [debouncedSearch, statusFilter]);
-
-    const renderStatusBadge = useCallback(
-        (status: SchoolStatus) => (
-            <Badge className={`${statusBadges[status]} text-xs px-3 py-1`}>{status === 'ACTIVE' ? 'Approved' : status === 'INACTIVE' ? 'Inactive' : 'Completed'}</Badge>
-        ),
-        []
-    );
-
-    const paginationInfo = useMemo(() => {
-        const start = totalResults === 0 ? 0 : (page - 1) * limit + 1;
-        const end = Math.min(page * limit, totalResults);
-        return `${start}-${end} of ${totalResults}`;
-    }, [limit, page, totalResults]);
-
+  if (loading) {
     return (
-        <div className="flex-1 min-h-screen bg-gray-50 overflow-y-auto">
-            <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
-                {/* Page Header */}
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900 uppercase">List Schools</h1>
-                        <p className="text-sm text-gray-500 mt-1">Dashboards / Manage Schools / List School</p>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                        <Button
-                            asChild
-                            className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm flex items-center"
-                        >
-                            <Link href="/manage-school/add-school">
-                                <Plus className="w-4 h-4 mr-2" />
-                                Add School
-                            </Link>
-                        </Button>
-                    </div>
-                </div>
-
-                {/* Filters */}
-                <Card className="shadow-sm border border-gray-200">
-                    <CardContent className="p-4 lg:p-6">
-                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                            <div className="relative w-full lg:max-w-md">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <Input
-                                    placeholder="Search by school name, code, or city"
-                                    className="pl-10 pr-4"
-                                    value={searchTerm}
-                                    onChange={(event) => setSearchTerm(event.target.value)}
-                                />
-                            </div>
-
-                            <div className="flex flex-wrap items-center gap-3">
-                                <div className="relative">
-                                    <label htmlFor="status-filter" className="sr-only">
-                                        Filter schools by status
-                                    </label>
-                                    <select
-                                        id="status-filter"
-                                        className="appearance-none pl-4 pr-10 py-2 text-sm rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        value={statusFilter}
-                                        onChange={(event) => setStatusFilter(event.target.value as SchoolStatus | 'ALL')}
-                                    >
-                                        {statusOptions.map((option) => (
-                                            <option key={option.value} value={option.value}>
-                                                {option.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                </div>
-
-                                <Button variant="outline" size="icon" onClick={resetFilters}>
-                                    <RefreshCw className="w-4 h-4" />
-                                </Button>
-
-                                <Button variant="outline" size="icon" disabled>
-                                    <Filter className="w-4 h-4" />
-                                </Button>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Status Overview Table */}
-                <Card className="shadow-sm border border-gray-200">
-                    <CardContent className="p-0">
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-100">
-                                    <tr>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                            <Checkbox aria-label="Select all schools" />
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                            #
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                            School Type
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                            School Code
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                            School Name
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                            School Location
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                            Students
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                            Last Updated
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                            Status
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider text-center">
-                                            Action
-                                        </th>
-                                    </tr>
-                                </thead>
-
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {loading ? (
-                                        <tr>
-                                            <td colSpan={10} className="py-12">
-                                                <div className="flex flex-col items-center justify-center text-gray-500">
-                                                    <Loader2 className="w-8 h-8 animate-spin mb-3" />
-                                                    <span className="text-sm">Loading schools...</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ) : error ? (
-                                        <tr>
-                                            <td colSpan={10} className="py-12">
-                                                <div className="flex flex-col items-center justify-center text-red-500 space-y-2">
-                                                    <span className="text-sm font-medium">{error}</span>
-                                                    <Button variant="outline" size="sm" onClick={fetchSchools}>
-                                                        Retry
-                                                    </Button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ) : schools.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={10} className="py-12">
-                                                <div className="flex flex-col items-center justify-center text-gray-500 space-y-2">
-                                                    <p className="text-sm font-medium">No schools found</p>
-                                                    <p className="text-xs text-gray-400">Try adjusting your filters or add a new school.</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        schools.map((school, index) => (
-                                            <tr key={school.id} className="hover:bg-gray-50 transition-colors">
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <Checkbox aria-label={`Select ${school.name}`} />
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    {(page - 1) * limit + (index + 1)}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                                    {typeLabels[school.type]}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                                                    {school.code}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                                    {school.name}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                                    {school.city || '—'}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center">
-                                                    {school._count?.students ?? 0}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                                    {school.updatedAt ? new Date(school.updatedAt).toLocaleDateString() : '—'}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    {renderStatusBadge(school.status)}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                    <div className="flex items-center justify-center space-x-3 text-gray-500">
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="hover:text-blue-600"
-                                                            onClick={() => router.push(`/manage-school/${school.id}`)}
-                                                            aria-label={`View ${school.name}`}
-                                                        >
-                                                            <Eye className="w-4 h-4" />
-                                                        </Button>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="hover:text-amber-600"
-                                                            onClick={() => router.push(`/manage-school/edit/${school.id}`)}
-                                                            aria-label={`Edit ${school.name}`}
-                                                        >
-                                                            <Pencil className="w-4 h-4" />
-                                                        </Button>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="hover:text-red-600"
-                                                            onClick={() => handleDelete(school.id)}
-                                                            aria-label={`Delete ${school.name}`}
-                                                        >
-                                                            <Trash2 className="w-4 h-4" />
-                                                        </Button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {/* Pagination */}
-                        {!loading && schools.length > 0 && (
-                            <div className="flex flex-col md:flex-row md:items-center md:justify-between px-6 py-4 border-t border-gray-200 gap-3">
-                                <p className="text-sm text-gray-500">Showing {paginationInfo}</p>
-                                <div className="flex items-center space-x-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        disabled={page === 1}
-                                        onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-                                    >
-                                        <ChevronLeft className="w-4 h-4 mr-1" />
-                                        Previous
-                                    </Button>
-                                    <span className="text-sm text-gray-500">
-                                        Page <span className="font-semibold text-gray-900">{page}</span> of {totalPages}
-                                    </span>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        disabled={page === totalPages}
-                                        onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
-                                    >
-                                        Next
-                                        <ChevronRight className="w-4 h-4 ml-1" />
-                                    </Button>
-                                </div>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading schools...</p>
         </div>
+      </div>
     );
+  }
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 flex items-start gap-4">
+            <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-red-900 mb-2">Error Loading Schools</h3>
+              <p className="text-red-700 mb-4">{error}</p>
+              <button
+                onClick={fetchSchools}
+                className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-8 bg-gray-50 min-h-screen">
+      {/* Breadcrumb */}
+      <div className="mb-6">
+        <p className="text-sm text-gray-500 mb-2">
+          Dashboards / Manage Schools / <span className="text-gray-900 font-medium">List Schools</span>
+        </p>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-semibold text-gray-800">List Schools</h1>
+          <button
+            onClick={() => router.push('/manage-school/add-school')}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Add New School
+          </button>
+        </div>
+      </div>
+
+      {/* Schools Table */}
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        {schools.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg mb-4">No schools found</p>
+            <button
+              onClick={() => router.push('/manage-school/add-school')}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Add Your First School
+            </button>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    School Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Type
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Location
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Phone
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Session
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {schools.map((school) => (
+                  <tr key={school.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{school.schoolName}</div>
+                          {school.verified && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                              Verified
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm text-gray-900 capitalize">
+                        {school.schoolType === 'multiBranch' ? 'Multi Branch' : 'Single'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {school.city && school.state ? `${school.city}, ${school.state}` : school.city || school.state || 'N/A'}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{school.phoneNo || 'N/A'}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          school.status === 'active'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}
+                      >
+                        {school.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {school.session || 'N/A'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => router.push(`/manage-school/view/${school.id}`)}
+                          className="text-blue-600 hover:text-blue-900 p-2 hover:bg-blue-50 rounded transition-colors"
+                          title="View School"
+                        >
+                          <Eye className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => router.push(`/manage-school/edit/${school.id}`)}
+                          className="text-green-600 hover:text-green-900 p-2 hover:bg-green-50 rounded transition-colors"
+                          title="Edit School"
+                        >
+                          <Edit className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(school.id, school.schoolName)}
+                          className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded transition-colors"
+                          title="Delete School"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Summary */}
+      {schools.length > 0 && (
+        <div className="mt-4 text-sm text-gray-600">
+          Showing {schools.length} school{schools.length !== 1 ? 's' : ''}
+        </div>
+      )}
+    </div>
+  );
 }
