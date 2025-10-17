@@ -59,7 +59,6 @@ const navigation: NavigationItem[] = [
     ],
   },
   { name: 'Reports', href: '/reports', icon: FileText },
-  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 

@@ -1,28 +1,26 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import AuthProvider from '../context/AuthProvider';
-import { Toaster } from '@/components/ui/toaster';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { ThemeProvider } from "@/context/ThemeContext";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Your App Title',
-  description: 'Your app description',
+  title: "School Management System",
+  description: "Manage schools and students",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <AuthProvider>
+        <ThemeProvider>
           {children}
-          <Toaster />
-        </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

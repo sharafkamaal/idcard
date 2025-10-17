@@ -8,6 +8,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  email         String    @unique
+  name          String
+  password      String
+  avatar        String?
+  phone         String?
+  role          String    @default("ADMIN")
+  theme         String    @default("light")
+  notifications Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("users")
+}
+
 model School {
   id                      String    @id @default(auto()) @map("_id") @db.ObjectId
   schoolType              String
@@ -79,3 +95,4 @@ enum Status {
   ACTIVE
   INACTIVE
 }
+
