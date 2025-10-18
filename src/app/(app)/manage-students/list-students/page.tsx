@@ -261,7 +261,7 @@ export default function StudentListPage() {
 
         {/* Footer */}
         <div className="text-center text-sm text-gray-500">
-          2020 © Wezant. Design & Develop by ❤️ Zenoids
+          2025 © Wezant. Design & Developed by ❤️ Zenoids
         </div>
       </div>
     </div>

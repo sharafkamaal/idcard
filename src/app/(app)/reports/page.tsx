@@ -313,7 +313,7 @@ export default function ReportsPage() {
 
         {/* Footer */}
         <div className="text-center text-sm text-gray-500 mt-8">
-          2020 © Wezant. Design & Develop by ❤️ Zenoids
+          2025 © Wezant. Design & Develop by ❤️ Zenoids
         </div>
       </div>
     </div>

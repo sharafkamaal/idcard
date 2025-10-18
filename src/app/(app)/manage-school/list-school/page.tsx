@@ -244,6 +244,7 @@ export default function ListSchoolPage() {
         <div className="mt-4 text-sm text-gray-600">
           Showing {schools.length} school{schools.length !== 1 ? 's' : ''}
         </div>
+        
       )}
     </div>
   );

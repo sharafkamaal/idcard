@@ -742,6 +742,10 @@ export default function AddStudentPage() {
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
             {loading ? 'Submitting...' : 'Submit'}
           </button>
+          {/* Footer */}
+        <div className="text-center text-sm text-gray-500">
+          2025 © Wezant. Design & Developed by ❤️ Zenoids
+        </div>
         </div>
       </form>
     </div>

@@ -1,98 +1,105 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
-import { Menu, Bell, User, ChevronDown } from 'lucide-react';
+import { Menu, Bell, User, ChevronDown, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
 export default function AppLayoutClient({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      setSidebarOpen(!mobile);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(prev => !prev);
+  };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden m-0 p-0">
-      {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        onToggle={toggleSidebar}
+        isMobile={isMobile}
+      />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden m-0 p-0">
-        {/* Top Navigation Bar */}
+      {/* Main Content */}
+      <div 
+        className={cn(
+          "flex-1 flex flex-col overflow-hidden",
+          "transition-all duration-300 ease-in-out",
+          !isMobile && (sidebarOpen ? "ml-64" : "ml-20")
+        )}
+      >
+        {/* Header */}
         <header className="bg-white border-b border-gray-200 z-10 shadow-sm flex-shrink-0">
-          <div className="flex items-center justify-between px-4 lg:px-6 py-4">
-            {/* Left Section - Menu Button & Search */}
-            <div className="flex items-center flex-1 min-w-0">
-              {/* Mobile Menu Button */}
+          <div className="flex items-center justify-between px-4 lg:px-6 py-3">
+            <div className="flex items-center flex-1 min-w-0 gap-3">
+              {/* Hamburger Button */}
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setSidebarOpen(true)}
-                className="lg:hidden mr-2 text-gray-600 hover:text-gray-900 flex-shrink-0"
+                onClick={toggleSidebar}
+                className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 p-1 flex-shrink-0 transition-all duration-200"
+                aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
               >
-                <Menu className="w-6 h-6" />
+                <Menu className="w-5 h-5" aria-hidden="true" />
               </Button>
 
-              {/* Search Bar */}
-              <div className="relative w-full max-w-md hidden md:block">
-                <svg
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
+              {/* Search */}
+              <div className="relative w-full max-w-md">
+                <Search 
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
+                  aria-hidden="true"
+                />
                 <Input
                   type="text"
-                  placeholder="Search students, reports..."
-                  className="pl-10 pr-4 py-2 border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Search..."
+                  className="pl-9 pr-4 py-2 text-sm border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 rounded-md transition-all"
+                  aria-label="Search"
                 />
               </div>
             </div>
 
-            {/* Right Section - Notifications & User Profile */}
-            <div className="flex items-center space-x-3 lg:space-x-4 flex-shrink-0">
-              {/* Notification Bell */}
-              <button className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0">
-                <Bell className="w-5 h-5 lg:w-6 lg:h-6" />
-                {/* Notification Badge */}
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+            {/* Right Side */}
+            <div className="flex items-center gap-2 lg:gap-4 flex-shrink-0">
+              <button 
+                className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="Notifications"
+              >
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
               </button>
 
-              {/* User Profile Section */}
-              <div className="flex items-center space-x-2 lg:space-x-3 pl-3 lg:pl-4 border-l border-gray-200">
-                {/* Avatar */}
-                <div className="w-9 h-9 lg:w-10 lg:h-10 bg-blue-600 rounded-full flex items-center justify-center ring-2 ring-blue-100 flex-shrink-0">
-                  <User className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
+              <button className="flex items-center gap-2 lg:gap-3 pl-2 lg:pl-3 ml-2 border-l border-gray-200 hover:bg-gray-50 rounded-lg transition-colors py-1 pr-2">
+                <div className="w-8 h-8 lg:w-9 lg:h-9 bg-blue-600 rounded-full flex items-center justify-center">
+                  <User className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
                 </div>
-
-                {/* User Info - Hidden on mobile */}
-                <div className="hidden lg:block">
-                  <p className="text-sm font-semibold text-gray-900 leading-tight">
-                    Admin User
-                  </p>
-                  <p className="text-xs text-gray-500 leading-tight">
-                    Administrator
-                  </p>
-                </div>
-
-                {/* Dropdown Arrow */}
+                <span className="hidden lg:block text-sm font-semibold text-gray-900">Admin User</span>
                 <ChevronDown className="w-4 h-4 text-gray-400 hidden lg:block" />
-              </div>
+              </button>
             </div>
           </div>
         </header>
 
-        {/* Page Content Area - NO PADDING */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 m-0 p-0">
+        {/* Main Content */}
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50">
           {children}
         </main>
       </div>

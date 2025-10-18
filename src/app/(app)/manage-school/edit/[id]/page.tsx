@@ -46,7 +46,7 @@ export default function EditSchoolPage() {
       try {
         const response = await fetch(`/api/schools/${params.id}`);
         const data = await response.json();
-        
+
         if (data.success) {
           setFormData(data.data);
           setLogoPreview(data.data.logoUrl || '');
@@ -673,6 +673,10 @@ export default function EditSchoolPage() {
             >
               {saving ? 'Saving...' : 'Update'}
             </button>
+            {/* Footer */}
+            <div className="text-center text-sm text-gray-500">
+              2025 © Wezant. Design & Developed by ❤️ Zenoids
+            </div>
           </div>
         </div>
       </form>

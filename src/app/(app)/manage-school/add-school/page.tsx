@@ -698,6 +698,10 @@ export default function AddSchoolPage() {
           idCardDesignUrl: idCardPreview,
         }}
       />
+      {/* Footer */}
+        <div className="text-center text-sm text-gray-500">
+          2025 © Wezant. Design & Developed by ❤️ Zenoids
+        </div>
     </div>
   );
 }

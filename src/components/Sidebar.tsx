@@ -1,21 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { 
-  X, 
-  Home, 
-  Users, 
-  FileText, 
-  Settings, 
-  BarChart3, 
+import {
+  Home,
+  Users,
+  FileText,
+  Settings,
   LogOut,
   GraduationCap,
   ChevronDown,
   ChevronRight,
   Plus,
   List,
-  Eye,
-  Edit
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -24,7 +20,8 @@ import { cn } from '@/lib/utils';
 
 interface SidebarProps {
   isOpen: boolean;
-  onClose: () => void;
+  onToggle: () => void;
+  isMobile: boolean;
 }
 
 interface SubMenuItem {
@@ -62,16 +59,21 @@ const navigation: NavigationItem[] = [
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
-export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+export default function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
   const pathname = usePathname();
-  const [expandedItems, setExpandedItems] = useState<string[]>(['Manage Schools', 'Manage Students']);
+  const [expandedItems, setExpandedItems] = useState<string[]>([
+    'Manage Schools',
+    'Manage Students'
+  ]);
 
   const toggleExpanded = (itemName: string) => {
-    setExpandedItems(prev =>
-      prev.includes(itemName)
-        ? prev.filter(item => item !== itemName)
-        : [...prev, itemName]
-    );
+    if (isOpen) {
+      setExpandedItems(prev =>
+        prev.includes(itemName)
+          ? prev.filter(item => item !== itemName)
+          : [...prev, itemName]
+      );
+    }
   };
 
   const isExpanded = (itemName: string) => expandedItems.includes(itemName);
@@ -81,8 +83,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       return pathname === item.href;
     }
     if (item.subItems) {
-      return item.subItems.some(subItem => 
-        pathname === subItem.href || 
+      return item.subItems.some(subItem =>
+        pathname === subItem.href ||
         pathname?.startsWith(subItem.href + '/')
       );
     }
@@ -90,51 +92,53 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   };
 
   const isSubItemActive = (href: string) => {
-    // Handle dynamic routes
-    if (href === '/manage-school/view') {
-      return pathname?.startsWith('/manage-school/view');
+    return pathname === href || pathname?.startsWith(href + '/');
+  };
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      onToggle();
     }
-    if (href === '/manage-school/edit') {
-      return pathname?.startsWith('/manage-school/edit');
-    }
-    if (href === '/manage-students/list') {
-      return pathname?.startsWith('/manage-students/list');
-    }
-    return pathname === href;
   };
 
   return (
     <>
-      {/* Mobile backdrop */}
-      {isOpen && (
+      {/* Backdrop - Faster animation */}
+      {isMobile && isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={onClose}
+          className="fixed inset-0 bg-black/50 z-40 transition-opacity duration-200"
+          onClick={onToggle}
+          aria-hidden="true"
         />
       )}
-      
-      {/* Sidebar */}
-      <div
+
+      {/* Sidebar - Optimized animation */}
+      <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed top-0 left-0 z-50 h-screen bg-gray-900 shadow-2xl",
+          // Single fast transition - NO STACKING!
+          "transition-all duration-200 ease-out",
+          // Mobile: slide in/out
+          isMobile && (isOpen ? "translate-x-0" : "-translate-x-full"),
+          // Desktop: width change
+          isOpen ? "w-64" : "w-20"
         )}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-700">
-          <h1 className="text-xl font-bold text-white">Wezant</h1>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="lg:hidden text-gray-400 hover:text-white hover:bg-gray-800"
-          >
-            <X className="w-5 h-5" />
-          </Button>
+        {/* Header - Simple, no animation */}
+        <div className="flex items-center justify-center h-20 border-b border-gray-700 px-4">
+          <Link href="/dashboard" onClick={handleLinkClick}>
+            {isOpen ? (
+              <h1 className="text-xl font-bold text-white cursor-pointer">
+                Wezant
+              </h1>
+            ) : (
+              <span className="text-2xl font-bold text-white">W</span>
+            )}
+          </Link>
         </div>
-        
-        {/* Navigation */}
-        <nav className="mt-6 px-3 h-[calc(100vh-180px)] overflow-y-auto">
+
+        {/* Navigation - No staggered delays */}
+        <nav className="py-4 px-2 h-[calc(100vh-160px)] overflow-y-auto overflow-x-hidden">
           <ul className="space-y-1">
             {navigation.map((item) => {
               const isActive = isItemActive(item);
@@ -143,77 +147,113 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
               return (
                 <li key={item.name}>
-                  {/* Main Navigation Item */}
                   {hasSubItems ? (
                     <>
+                      {/* Parent Item */}
                       <button
                         onClick={() => toggleExpanded(item.name)}
                         className={cn(
-                          "w-full flex items-center justify-between px-3 py-3 text-sm font-medium rounded-lg transition-colors group",
+                          "w-full flex items-center rounded-lg",
+                          "transition-colors duration-150", // Fast transition
+                          isOpen ? "justify-between px-3 py-3" : "justify-center px-2 py-3",
                           isActive
                             ? "bg-gray-800 text-white"
                             : "text-gray-300 hover:bg-gray-800 hover:text-white"
                         )}
+                        title={!isOpen ? item.name : undefined}
                       >
-                        <div className="flex items-center">
-                          <item.icon className={cn(
-                            "w-5 h-5 mr-3 transition-colors",
-                            isActive ? "text-white" : "text-gray-400 group-hover:text-white"
-                          )} />
-                          {item.name}
+                        <div className="flex items-center min-w-0">
+                          <item.icon
+                            className={cn(
+                              "flex-shrink-0",
+                              isOpen ? "w-5 h-5" : "w-6 h-6",
+                              isActive ? "text-white" : "text-gray-400"
+                            )}
+                            aria-hidden="true"
+                          />
+                          {isOpen && (
+                            <span className="ml-3 text-sm font-medium truncate">
+                              {item.name}
+                            </span>
+                          )}
                         </div>
-                        {expanded ? (
-                          <ChevronDown className="w-4 h-4 transition-transform" />
-                        ) : (
-                          <ChevronRight className="w-4 h-4 transition-transform" />
+                        
+                        {isOpen && (
+                          <ChevronDown
+                            className={cn(
+                              "w-4 h-4 flex-shrink-0 transition-transform duration-150",
+                              expanded && "rotate-180"
+                            )}
+                            aria-hidden="true"
+                          />
                         )}
                       </button>
 
-                      {/* Submenu Items */}
-                      {expanded && (
-                        <ul className="mt-1 ml-4 space-y-1">
-                          {item.subItems?.map((subItem) => {
-                            const isSubActive = isSubItemActive(subItem.href);
-                            return (
-                              <li key={subItem.href}>
-                                <Link
-                                  href={subItem.href}
-                                  className={cn(
-                                    "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors group",
-                                    isSubActive
-                                      ? "bg-blue-600 text-white shadow-lg"
-                                      : "text-gray-400 hover:bg-gray-800 hover:text-white"
-                                  )}
-                                  onClick={onClose}
-                                >
-                                  <subItem.icon className={cn(
-                                    "w-4 h-4 mr-3 transition-colors",
-                                    isSubActive ? "text-white" : "text-gray-500 group-hover:text-white"
-                                  )} />
-                                  {subItem.name}
-                                </Link>
-                              </li>
-                            );
-                          })}
-                        </ul>
+                      {/* Submenu - Faster transition */}
+                      {isOpen && (
+                        <div
+                          className={cn(
+                            "overflow-hidden transition-all duration-150",
+                            expanded ? "max-h-40 mt-1" : "max-h-0"
+                          )}
+                        >
+                          <ul className="ml-6 space-y-1">
+                            {item.subItems?.map((subItem) => {
+                              const isSubActive = isSubItemActive(subItem.href);
+                              return (
+                                <li key={subItem.href}>
+                                  <Link
+                                    href={subItem.href}
+                                    className={cn(
+                                      "flex items-center px-3 py-2 text-sm font-medium rounded-lg",
+                                      "transition-colors duration-150",
+                                      isSubActive
+                                        ? "bg-blue-600 text-white"
+                                        : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                                    )}
+                                    onClick={handleLinkClick}
+                                    aria-current={isSubActive ? "page" : undefined}
+                                  >
+                                    <subItem.icon
+                                      className="w-4 h-4 mr-3 flex-shrink-0"
+                                      aria-hidden="true"
+                                    />
+                                    <span className="truncate">{subItem.name}</span>
+                                  </Link>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
                       )}
                     </>
                   ) : (
                     <Link
                       href={item.href!}
                       className={cn(
-                        "flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-colors group",
+                        "flex items-center rounded-lg transition-colors duration-150",
+                        isOpen ? "justify-start px-3 py-3" : "justify-center px-2 py-3",
                         isActive
-                          ? "bg-blue-600 text-white shadow-lg"
+                          ? "bg-blue-600 text-white"
                           : "text-gray-300 hover:bg-gray-800 hover:text-white"
                       )}
-                      onClick={onClose}
+                      onClick={handleLinkClick}
+                      title={!isOpen ? item.name : undefined}
+                      aria-current={isActive ? "page" : undefined}
                     >
-                      <item.icon className={cn(
-                        "w-5 h-5 mr-3 transition-colors",
-                        isActive ? "text-white" : "text-gray-400 group-hover:text-white"
-                      )} />
-                      {item.name}
+                      <item.icon
+                        className={cn(
+                          "flex-shrink-0",
+                          isOpen ? "w-5 h-5" : "w-6 h-6",
+                          isActive ? "text-white" : "text-gray-400"
+                        )}
+                        aria-hidden="true"
+                      />
+                      {isOpen && (
+                        <span className="ml-3 text-sm font-medium truncate">
+                          {item.name}
+                        </span>
+                      )}
                     </Link>
                   )}
                 </li>
@@ -221,22 +261,31 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             })}
           </ul>
         </nav>
-        
-        {/* Logout Button at Bottom */}
-        <div className="absolute bottom-6 left-3 right-3 border-t border-gray-700 pt-4">
+
+        {/* Logout Button */}
+        <div className="absolute bottom-0 left-0 right-0 p-2 border-t border-gray-700 bg-gray-900">
           <Button
             variant="ghost"
-            className="w-full justify-start text-gray-300 hover:bg-gray-800 hover:text-white"
-            onClick={() => {
-              // Add logout logic here
-              console.log('Logout clicked');
-            }}
+            className={cn(
+              "w-full text-gray-300 hover:bg-gray-800 hover:text-white transition-colors duration-150",
+              isOpen ? "justify-start px-3 py-3" : "justify-center px-2 py-3"
+            )}
+            onClick={() => console.log('Logout clicked')}
+            title={!isOpen ? "Logout" : undefined}
           >
-            <LogOut className="w-5 h-5 mr-3" />
-            Logout
+            <LogOut 
+              className={cn(
+                "flex-shrink-0",
+                isOpen ? "w-5 h-5" : "w-6 h-6"
+              )} 
+              aria-hidden="true" 
+            />
+            {isOpen && (
+              <span className="ml-3 text-sm font-medium">Logout</span>
+            )}
           </Button>
         </div>
-      </div>
+      </aside>
     </>
   );
 }
