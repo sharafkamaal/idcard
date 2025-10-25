@@ -5,11 +5,12 @@ const prisma = new PrismaClient();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
   try {
     const school = await prisma.school.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!school) {

@@ -7,10 +7,11 @@ import { NextRequest } from 'next/server';
 import { authOptions } from '../../auth/[...nextauth]/options';
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { messageid: string } }
+  request: NextRequest,
+  context: { params: Promise<{ messageid: string }> }
 ) {
-  const messageId = params.messageid;
+  const { messageid } = await context.params;
+  const messageId = messageid;
   await dbConnect();
   const session = await getServerSession(authOptions);
   const _user: User = session?.user;

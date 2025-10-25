@@ -3,6 +3,7 @@
 import { signIn } from "next-auth/react"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
+import Image from "next/image"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -61,10 +62,13 @@ export default function SignInPage() {
     <div className="min-h-screen flex">
       {/* Left side - Full image */}
       <div className="hidden lg:flex w-1/2 bg-gray-100">
-        <img
+        <Image
           src="/login_download.png"
           alt="Sign in illustration"
-          className="object-cover w-full h-full"
+          fill
+          className="object-cover"
+          sizes="50vw"
+          priority
         />
       </div>
 
@@ -163,7 +167,7 @@ export default function SignInPage() {
 
           {/* Signup link */}
           <p className="text-center text-sm text-gray-600">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/sign-up" className="text-blue-600 hover:underline">
               Sign up now
             </Link>

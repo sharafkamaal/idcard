@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface Student {
@@ -28,11 +29,7 @@ export default function StudentListPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  useEffect(() => {
-    fetchStudents();
-  }, [statusFilter, searchTerm]);
-
-  const fetchStudents = async () => {
+  const fetchStudents = useCallback(async () => {
     try {
       const params = new URLSearchParams();
       if (statusFilter !== 'all') params.append('status', statusFilter);
@@ -48,7 +45,11 @@ export default function StudentListPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter, searchTerm]);
+
+  useEffect(() => {
+    fetchStudents();
+  }, [fetchStudents]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this student?')) return;
@@ -170,12 +171,14 @@ export default function StudentListPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                        <div className="relative w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
                           {student.photoUrl ? (
-                            <img
+                            <Image
                               src={student.photoUrl}
                               alt={`${student.firstName} ${student.lastName}`}
-                              className="w-full h-full object-cover"
+                              fill
+                              sizes="40px"
+                              className="object-cover"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-400">

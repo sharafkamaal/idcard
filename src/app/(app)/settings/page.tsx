@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useTheme } from '@/context/ThemeContext';
 
 interface UserSettings {
@@ -42,23 +43,13 @@ export default function SettingsPage() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>('');
 
-  useEffect(() => {
-    fetchSettings();
-  }, []);
-
-  // Sync theme from context to settings
-  useEffect(() => {
-    setSettings(prev => ({ ...prev, theme: currentTheme }));
-  }, [currentTheme]);
-
-  const fetchSettings = async () => {
+  const fetchSettings = useCallback(async () => {
     try {
       const response = await fetch('/api/settings');
       if (response.ok) {
         const result = await response.json();
         setSettings(result.data);
         setAvatarPreview(result.data.avatar || '');
-        // Set theme from API
         setTheme(result.data.theme || 'light');
       }
     } catch (error) {
@@ -66,7 +57,16 @@ export default function SettingsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setTheme]);
+
+  useEffect(() => {
+    fetchSettings();
+  }, [fetchSettings]);
+
+  // Sync theme from context to settings
+  useEffect(() => {
+    setSettings(prev => ({ ...prev, theme: currentTheme }));
+  }, [currentTheme]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -279,10 +279,13 @@ export default function SettingsPage() {
                   <div className="flex items-center gap-6">
                     <div className="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
                       {avatarPreview ? (
-                        <img
+                        <Image
                           src={avatarPreview}
                           alt="Profile"
+                          width={96}
+                          height={96}
                           className="w-full h-full object-cover"
+                          unoptimized
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-4xl text-gray-400 dark:text-gray-500">

@@ -19,6 +19,7 @@ import {
   Bar,
   Legend
 } from 'recharts';
+import { ClientOnly } from '@/components/ClientOnly';
 
 // Sample data for charts
 const workStatusData = [
@@ -122,216 +123,233 @@ const studentRequestsData = [
 
 export default function Home() {
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">DASHBOARDS</h1>
-          <p className="text-sm text-gray-500 mt-1">School Branches</p>
-        </div>
-        <div className="flex items-center space-x-2 text-sm text-gray-500">
-          <span>Dashboards</span>
-          <span>/</span>
-          <span className="text-gray-900">Dashboards</span>
-        </div>
-      </div>
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Students Register</p>
-                <p className="text-2xl font-bold text-gray-900">1,235</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Export Submit Printing</p>
-                <p className="text-2xl font-bold text-gray-900">35,723</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <GraduationCap className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Pending Verification</p>
-                <p className="text-2xl font-bold text-gray-900">1000</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <Clock className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Completed Printing</p>
-                <p className="text-2xl font-bold text-gray-900">1000</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <FileCheck className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Work Status Pie Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Work Status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={workStatusData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {workStatusData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="mt-4 space-y-2">
-              {workStatusData.map((item, index) => (
-                <div key={index} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center">
-                    <div 
-                      className={`w-3 h-3 rounded-full mr-2 ${item.className}`}
-                    ></div>
-                    <span>{item.name}</span>
-                  </div>
-                  <span className="font-medium">{item.value}%</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Printing Turnaround Time Line Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Printing Turnaround Time</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={printingTurnaroundData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="time" 
-                    stroke="#3B82F6" 
-                    activeDot={{ r: 8 }} 
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Entries Overview Bar Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Entries Overview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={entriesOverviewData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="invalid" fill="#EF4444" />
-                  <Bar dataKey="missing" fill="#F59E0B" />
-                  <Bar dataKey="incomplete" fill="#8B5CF6" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Student Requests Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">Student Requests</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">School</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {studentRequestsData.map((request) => (
-                  <tr key={request.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{request.id}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.date}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.schoolName}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.studentName}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.schoolLocation}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Badge className={request.statusColor}>{request.status}</Badge>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <Button variant="ghost" size="sm">
-                        <Eye className="w-4 h-4 mr-1" />
-                        View
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+    <ClientOnly
+      fallback={
+        <div className="space-y-6">
+          {/* Page Header */}
+          <div className="flex items-center justify-between">
+            <div className="h-6 w-32 bg-gray-200 animate-pulse rounded" />
+            <div className="h-4 w-24 bg-gray-200 animate-pulse rounded" />
           </div>
-        </CardContent>
-      </Card>
-    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, index) => (
+              <div key={index} className="h-36 bg-white rounded-lg shadow-sm" />
+            ))}
+          </div>
+        </div>
+      }
+    >
+      <section className="space-y-6" aria-live="polite">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">DASHBOARDS</h1>
+            <p className="text-sm text-gray-500 mt-1">School Branches</p>
+          </div>
+          <div className="flex items-center space-x-2 text-sm text-gray-500">
+            <span>Dashboards</span>
+            <span>/</span>
+            <span className="text-gray-900">Dashboards</span>
+          </div>
+        </div>
+
+        {/* KPI Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Students Register</p>
+                  <p className="text-2xl font-bold text-gray-900">1,235</p>
+                </div>
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <Users className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Export Submit Printing</p>
+                  <p className="text-2xl font-bold text-gray-900">35,723</p>
+                </div>
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <GraduationCap className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Pending Verification</p>
+                  <p className="text-2xl font-bold text-gray-900">1000</p>
+                </div>
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <Clock className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Completed Printing</p>
+                  <p className="text-2xl font-bold text-gray-900">1000</p>
+                </div>
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <FileCheck className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Work Status Pie Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">Work Status</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64 min-h-[200px] min-w-[200px]" role="presentation">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={workStatusData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {workStatusData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-4 space-y-2">
+                {workStatusData.map((item, index) => (
+                  <div key={index} className="flex items-center justify-between text-sm">
+                    <div className="flex items-center">
+                      <div
+                        className={`w-3 h-3 rounded-full mr-2 ${item.className}`}
+                      ></div>
+                      <span>{item.name}</span>
+                    </div>
+                    <span className="font-medium">{item.value}%</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Printing Turnaround Time Line Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">Printing Turnaround Time</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={printingTurnaroundData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="time"
+                      stroke="#3B82F6"
+                      activeDot={{ r: 8 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Entries Overview Bar Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">Entries Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={entriesOverviewData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="invalid" fill="#EF4444" />
+                    <Bar dataKey="missing" fill="#F59E0B" />
+                    <Bar dataKey="incomplete" fill="#8B5CF6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Student Requests Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Student Requests</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">School</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {studentRequestsData.map((request) => (
+                    <tr key={request.id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{request.id}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.date}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.schoolName}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.studentName}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.schoolLocation}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <Badge className={request.statusColor}>{request.status}</Badge>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <Button variant="ghost" size="sm">
+                          <Eye className="w-4 h-4 mr-1" />
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+    </ClientOnly>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface StudentData {
   id: string;
@@ -149,12 +150,14 @@ export default function StudentViewPage() {
               <div className="flex gap-6 mb-8">
                 {/* Profile Photo */}
                 <div className="flex-shrink-0">
-                  <div className="w-32 h-32 border-4 border-gray-200 rounded-lg overflow-hidden bg-gray-100">
+                  <div className="relative w-32 h-32 border-4 border-gray-200 rounded-lg overflow-hidden bg-gray-100">
                     {student.photoUrl ? (
-                      <img
+                      <Image
                         src={student.photoUrl}
                         alt={fullName}
-                        className="w-full h-full object-cover"
+                        fill
+                        sizes="128px"
+                        className="object-cover"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-4xl text-gray-400">
@@ -324,12 +327,14 @@ export default function StudentViewPage() {
                 </div>
 
                 {/* Student Photo */}
-                <div className="w-24 h-24 bg-green-100 rounded-lg mx-auto mb-3 border-2 border-white overflow-hidden">
+                <div className="relative w-24 h-24 bg-green-100 rounded-lg mx-auto mb-3 border-2 border-white overflow-hidden">
                   {student.photoUrl ? (
-                    <img
+                    <Image
                       src={student.photoUrl}
                       alt={fullName}
-                      className="w-full h-full object-cover"
+                      fill
+                      sizes="96px"
+                      className="object-cover"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-3xl text-gray-500">

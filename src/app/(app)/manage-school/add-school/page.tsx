@@ -468,26 +468,55 @@ export default function AddSchoolPage() {
             {/* Right Column - ID Card Design */}
             <div className="w-64">
               <div className="flex flex-col items-center">
-                <h3 className="text-sm font-semibold text-gray-800 mb-4">Your School ID Card Design</h3>
-                <div className="w-56 h-80 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 p-4">
-                  {idCardPreview ? (
-                    <Image src={idCardPreview} alt="ID Card Design" width={200} height={300} className="object-contain" />
-                  ) : (
-                    <div className="text-center">
-                      <div className="w-32 h-48 mx-auto bg-gradient-to-b from-purple-300 via-blue-300 to-blue-400 rounded-lg shadow-md flex flex-col items-center justify-start p-3">
-                        <div className="text-purple-700 font-bold text-xs mb-2">SCHOOL NAME</div>
-                        <div className="w-16 h-16 bg-white rounded mb-2"></div>
-                        <div className="text-xs font-semibold">STUDENT NAME</div>
+                <h3 className="text-sm font-semibold text-gray-800 mb-4">Live ID Card Preview</h3>
+                <div className="w-56 h-80 p-3 rounded-3xl bg-white shadow-md border border-gray-100">
+                  <div className="relative w-full h-full rounded-3xl bg-white overflow-hidden">
+                    <div className="absolute inset-y-0 -left-14 w-40 bg-gradient-to-b from-green-500 via-green-400 to-emerald-300 opacity-80 -skew-x-6"></div>
+                    <div className="absolute inset-y-0 -right-14 w-40 bg-gradient-to-b from-purple-700 via-purple-500 to-purple-400 opacity-80 skew-x-6"></div>
+                    <div className="relative z-10 flex flex-col items-center h-full px-5 pt-6 pb-5 gap-4">
+                      <div className="w-[72px] h-[72px] rounded-full border-[5px] border-green-500 bg-white flex items-center justify-center shadow-md">
+                        {logoPreview ? (
+                          <Image src={logoPreview} alt="School Logo" width={68} height={68} className="rounded-full object-cover" />
+                        ) : (
+                          <div className="w-14 h-14 rounded-full bg-gray-200"></div>
+                        )}
+                      </div>
+                      <div className="text-center w-full">
+                        <div className="text-sm font-bold text-gray-900 uppercase tracking-wide leading-tight">
+                          {formData.schoolName || 'School Name'}
+                        </div>
+                        <div className="mt-1 h-1 w-16 mx-auto rounded-full bg-gradient-to-r from-green-500 via-emerald-400 to-purple-500"></div>
+                      </div>
+                      <div className="w-28 h-28 rounded-lg border-[5px] border-purple-500 bg-gray-100 flex items-center justify-center shadow-sm overflow-hidden">
+                        {idCardPreview ? (
+                          <Image src={idCardPreview} alt="Student" width={96} height={96} className="object-cover w-full h-full" />
+                        ) : (
+                          <div className="w-20 h-20 bg-gray-200"></div>
+                        )}
+                      </div>
+                      <div className="w-full space-y-3 text-left">
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">Student Name</span>
+                          <span className="text-xs font-semibold text-gray-900">STUDENT NAME</span>
+                        </div>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">Roll Number</span>
+                          <span className="text-xs font-semibold text-gray-900">MPS-M-001</span>
+                        </div>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">Father&apos;s Name</span>
+                          <span className="text-xs font-semibold text-gray-900">ARMAN AMAN</span>
+                        </div>
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-3 text-center">ID Card Design Upload for School</p>
+                <p className="text-xs text-gray-500 mt-3 text-center">Upload a student photo to preview inside the card</p>
                 <button
                   type="button"
                   onClick={() => idCardInputRef.current?.click()}
                   className="mt-3 px-6 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 flex items-center gap-2"
-                  aria-label="Choose ID card design file"
+                  aria-label="Upload student photo"
                 >
                   <span>Choose file</span>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -500,7 +529,7 @@ export default function AddSchoolPage() {
                   accept="image/*"
                   onChange={handleIdCardUpload}
                   className="hidden"
-                  aria-label="Upload ID card design"
+                  aria-label="Upload student photo"
                 />
               </div>
             </div>

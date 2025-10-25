@@ -36,52 +36,58 @@ export default function IdCardPreviewModal({ isOpen, onClose, schoolData }: IdCa
         <div className="p-6">
           {/* ID Card Preview */}
           <div className="flex justify-center mb-6">
-            {schoolData.idCardDesignUrl ? (
-              <div className="relative w-80 h-[500px]">
-                <Image
-                  src={schoolData.idCardDesignUrl}
-                  alt="ID Card Design"
-                  fill
-                  className="object-contain"
-                />
-              </div>
-            ) : (
-              <div className="w-80 h-[500px] bg-gradient-to-b from-purple-300 via-blue-300 to-blue-400 rounded-lg shadow-lg p-6 flex flex-col items-center">
-                {/* School Logo */}
-                <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-4">
+            <div className="relative w-80 h-[500px] bg-white rounded-3xl shadow-xl overflow-hidden px-10 pt-12 pb-14 flex flex-col items-center">
+              <div className="absolute inset-y-0 -left-16 w-48 bg-gradient-to-b from-green-500 via-green-400 to-emerald-300 opacity-80 -skew-x-6"></div>
+              <div className="absolute inset-y-0 -right-16 w-48 bg-gradient-to-b from-purple-700 via-purple-500 to-purple-400 opacity-80 skew-x-6"></div>
+              <div className="relative flex flex-col items-center w-full z-10 gap-8">
+                <div className="w-[100px] h-[100px] rounded-full border-[6px] border-green-500 bg-white flex items-center justify-center shadow-md">
                   {schoolData.logoUrl ? (
                     <Image
                       src={schoolData.logoUrl}
                       alt="School Logo"
-                      width={60}
-                      height={60}
+                      width={88}
+                      height={88}
                       className="rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-16 h-16 rounded-full bg-gray-200"></div>
+                    <div className="w-20 h-20 rounded-full bg-gray-200"></div>
                   )}
                 </div>
-
-                {/* School Name */}
-                <div className="text-red-600 font-bold text-lg mb-6 text-center">
-                  {schoolData.schoolName || 'SCHOOL NAME'}
+                <div className="w-full text-center space-y-2">
+                  <div className="text-3xl font-bold text-gray-900 uppercase tracking-wide">
+                    {schoolData.schoolName || 'SCHOOL NAME'}
+                  </div>
+                  <div className="mx-auto h-1 w-28 rounded-full bg-gradient-to-r from-green-500 via-emerald-400 to-purple-500"></div>
                 </div>
-
-                {/* Student Photo Placeholder */}
-                <div className="w-32 h-40 bg-white rounded-lg border-4 border-teal-400 mb-4 flex items-center justify-center">
-                  <div className="w-28 h-36 bg-gray-200 rounded"></div>
+                <div className="w-44 h-44 rounded-lg border-[6px] border-purple-500 bg-gray-100 flex items-center justify-center shadow-sm overflow-hidden">
+                  {schoolData.idCardDesignUrl ? (
+                    <Image
+                      src={schoolData.idCardDesignUrl}
+                      alt="Student"
+                      width={132}
+                      height={132}
+                      className="object-cover w-full h-full"
+                    />
+                  ) : (
+                    <div className="w-32 h-32 bg-gray-200"></div>
+                  )}
                 </div>
-
-                {/* Student Info */}
-                <div className="text-center space-y-1 text-sm">
-                  <div className="text-blue-600 font-semibold">STUDENT ID: MPS-M-001</div>
-                  <div className="font-bold text-gray-800">STUDENT NAME</div>
-                  <div className="text-xs text-gray-700">Father's Name: ARMAN AMAN</div>
-                  <div className="text-xs text-gray-700">Mother's Name: AMNA</div>
-                  <div className="text-xs text-gray-700">Class Roll: DY25</div>
+                <div className="w-full space-y-4 text-base">
+                  <div className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">Student Name</span>
+                    <span className="text-lg font-semibold text-gray-900">STUDENT NAME</span>
+                  </div>
+                  <div className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">Roll Number</span>
+                    <span className="text-lg font-semibold text-gray-900">MPS-M-001</span>
+                  </div>
+                  <div className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">Father&apos;s Name</span>
+                    <span className="text-lg font-semibold text-gray-900">ARMAN AMAN</span>
+                  </div>
                 </div>
               </div>
-            )}
+            </div>
           </div>
 
           {/* Message */}
