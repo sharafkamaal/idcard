@@ -1,10 +1,8 @@
-// app/(app)/manage-school/add-school/page.tsx
 'use client';
 
 import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import QRCode from 'qrcode';
 import IdCardPreviewModal from '@/components/IdCardPreviewModal';
 
 export default function AddSchoolPage() {
@@ -23,7 +21,6 @@ export default function AddSchoolPage() {
     status: 'active',
     verified: false,
     logoUrl: '',
-    qrCode: '',
     idCardDesignUrl: '',
     selectLayoutOfIdCard: 'vertical_id',
     sessionDisplayOnCard: true,
@@ -33,7 +30,6 @@ export default function AddSchoolPage() {
   });
 
   const [logoPreview, setLogoPreview] = useState('');
-  const [qrCodePreview, setQrCodePreview] = useState('');
   const [idCardPreview, setIdCardPreview] = useState('');
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -43,7 +39,6 @@ export default function AddSchoolPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-
     if (type === 'radio') {
       setFormData((prev) => ({ ...prev, [name]: value }));
     } else if (type === 'checkbox') {
@@ -57,7 +52,6 @@ export default function AddSchoolPage() {
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onloadend = () => {
       setLogoPreview(reader.result as string);
@@ -69,7 +63,6 @@ export default function AddSchoolPage() {
   const handleIdCardUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onloadend = () => {
       setIdCardPreview(reader.result as string);
@@ -78,35 +71,17 @@ export default function AddSchoolPage() {
     reader.readAsDataURL(file);
   };
 
-  const generateQRCode = async () => {
-    try {
-      const qrData = JSON.stringify({
-        schoolName: formData.schoolName,
-        phone: formData.phoneNo,
-        address: formData.address,
-      });
-      const qrCodeDataUrl = await QRCode.toDataURL(qrData);
-      setQrCodePreview(qrCodeDataUrl);
-      setFormData((prev) => ({ ...prev, qrCode: qrCodeDataUrl }));
-    } catch (error) {
-      console.error('Error generating QR code:', error);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       const response = await fetch('/api/schools', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
       const data = await response.json();
       if (data.success) {
-        // Show modal instead of navigating
         setShowModal(true);
       } else {
         alert('Error: ' + data.error);
@@ -139,7 +114,6 @@ export default function AddSchoolPage() {
       status: 'active',
       verified: false,
       logoUrl: '',
-      qrCode: '',
       idCardDesignUrl: '',
       selectLayoutOfIdCard: 'vertical_id',
       sessionDisplayOnCard: true,
@@ -148,29 +122,27 @@ export default function AddSchoolPage() {
       session: '',
     });
     setLogoPreview('');
-    setQrCodePreview('');
     setIdCardPreview('');
   };
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
+    <div className="p-4 bg-gray-50 min-h-screen">
       {/* Breadcrumb */}
-      <div className="mb-6">
+      <div className="mb-2">
         <p className="text-sm text-gray-500 mb-2">
           Dashboards / Manage Schools / <span className="text-gray-900 font-medium">Add School</span>
         </p>
-        <h1 className="text-xl font-semibold text-gray-800">ADD SCHOOL</h1>
+
       </div>
 
       {/* Main Form Container */}
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm">
         {/* School Profile Section */}
-        <div className="p-6 border-b">
+        <div className="p-4 border-b">
           <h2 className="text-lg font-semibold text-blue-600 mb-6">School Profile</h2>
-
-          <div className="flex gap-8">
-            {/* Left Column - Logo & QR Code */}
-            <div className="flex flex-col gap-6">
+          <div className="flex gap-4 flex-col md:flex-row">
+            {/* Left Column - Logo */}
+            <div className="flex flex-col gap-4 items-center md:items-start w-full md:w-60">
               {/* Logo Upload */}
               <div className="flex flex-col items-center">
                 <div className="relative w-40 h-40 rounded-full border-4 border-gray-200 flex items-center justify-center bg-white overflow-hidden">
@@ -204,45 +176,16 @@ export default function AddSchoolPage() {
                 <p className="text-xs text-gray-500 mt-3">Logo Size</p>
                 <p className="text-xs text-gray-400">(W:200px * H:200px)</p>
               </div>
-
-              {/* QR Code */}
-              <div className="flex flex-col items-center">
-                <label className="text-sm font-medium text-gray-700 mb-3">School QR Code</label>
-                <div className="w-40 h-40 border-2 border-blue-400 rounded-lg flex items-center justify-center bg-white p-2">
-                  {qrCodePreview ? (
-                    <Image src={qrCodePreview} alt="School QR Code" width={140} height={140} className="object-contain" />
-                  ) : (
-                    <div className="w-full h-full bg-black opacity-80"></div>
-                  )}
-                </div>
-                <button
-                  type="button"
-                  onClick={generateQRCode}
-                  className="mt-3 px-6 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
-                  aria-label="Generate and download QR code"
-                >
-                  Download QR
-                </button>
-                <p className="text-xs text-blue-400 mt-2 flex items-center gap-1">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                  </svg>
-                  Use QR code for branding to
-                  <br />
-                  <span className="ml-5">complete ID card</span>
-                </p>
-              </div>
             </div>
 
             {/* Middle Column - Form Fields */}
-            <div className="flex-1 space-y-6">
-              {/* School Type & Name Row */}
-              <div className="grid grid-cols-2 gap-6">
+            <div className="flex-1 space-y-1">
+              <div className="grid grid-cols-2 gap-1">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    School Type <span className="text-blue-400">⚡</span>
+                    School Type <span className="text-red-500">*</span>
                   </label>
-                  <div className="flex items-center gap-8">
+                  <div className="flex items-center gap-4">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="radio"
@@ -270,9 +213,11 @@ export default function AddSchoolPage() {
                   </div>
                 </div>
 
+
+
                 <div>
                   <label htmlFor="schoolName" className="block text-sm font-medium text-gray-700 mb-2">
-                    School Name <span className="text-blue-400">⚡</span>
+                    School Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="schoolName"
@@ -287,11 +232,10 @@ export default function AddSchoolPage() {
                 </div>
               </div>
 
-              {/* Phone Numbers Row */}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="phoneNo" className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone No <span className="text-blue-400">⚡</span>
+                    Phone No <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="phoneNo"
@@ -303,7 +247,6 @@ export default function AddSchoolPage() {
                     placeholder=""
                   />
                 </div>
-
                 <div>
                   <label htmlFor="altPhoneNo" className="block text-sm font-medium text-gray-700 mb-2">
                     Alt - Phone No
@@ -320,11 +263,10 @@ export default function AddSchoolPage() {
                 </div>
               </div>
 
-              {/* Address & City Row */}
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
-                    Address <span className="text-blue-400">⚡</span>
+                    Address <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="address"
@@ -336,10 +278,9 @@ export default function AddSchoolPage() {
                     placeholder=""
                   />
                 </div>
-
                 <div>
                   <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
-                    City <span className="text-blue-400">⚡</span>
+                    City <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="city"
@@ -353,11 +294,10 @@ export default function AddSchoolPage() {
                 </div>
               </div>
 
-              {/* State & Pin Code Row */}
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-2">
-                    State <span className="text-blue-400">⚡</span>
+                    State <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="state"
@@ -369,10 +309,9 @@ export default function AddSchoolPage() {
                     placeholder=""
                   />
                 </div>
-
                 <div>
                   <label htmlFor="pinCode" className="block text-sm font-medium text-gray-700 mb-2">
-                    Pin Code <span className="text-blue-400">⚡</span>
+                    Pin Code <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="pinCode"
@@ -386,7 +325,6 @@ export default function AddSchoolPage() {
                 </div>
               </div>
 
-              {/* Point of Contact Row */}
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="schoolPointOfContact" className="block text-sm font-medium text-gray-700 mb-2">
@@ -402,7 +340,6 @@ export default function AddSchoolPage() {
                     placeholder=""
                   />
                 </div>
-
                 <div>
                   <label htmlFor="pointOfContactPhone" className="block text-sm font-medium text-gray-700 mb-2">
                     Point of Contact Phone No
@@ -419,10 +356,9 @@ export default function AddSchoolPage() {
                 </div>
               </div>
 
-              {/* Status Section */}
               <div>
                 <label htmlFor="verificationStatus" className="block text-sm font-medium text-gray-700 mb-2">
-                  Status <span className="text-blue-400">⚡</span>
+                  Status <span className="text-red-500">*</span>
                 </label>
                 <div className="flex items-center gap-6">
                   <select
@@ -435,7 +371,6 @@ export default function AddSchoolPage() {
                     <option value="verified">Verified</option>
                     <option value="unverified">Unverified</option>
                   </select>
-
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="radio"
@@ -448,7 +383,6 @@ export default function AddSchoolPage() {
                     />
                     <span className="text-sm">Active</span>
                   </label>
-
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="radio"
@@ -466,7 +400,7 @@ export default function AddSchoolPage() {
             </div>
 
             {/* Right Column - ID Card Design */}
-            <div className="w-64">
+            <div className="w-64 mt-8 md:mt-0">
               <div className="flex flex-col items-center">
                 <h3 className="text-sm font-semibold text-gray-800 mb-4">Live ID Card Preview</h3>
                 <div className="w-56 h-80 p-3 rounded-3xl bg-white shadow-md border border-gray-100">
@@ -504,7 +438,7 @@ export default function AddSchoolPage() {
                           <span className="text-xs font-semibold text-gray-900">MPS-M-001</span>
                         </div>
                         <div className="flex flex-col gap-0.5">
-                          <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">Father&apos;s Name</span>
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">Father's Name</span>
                           <span className="text-xs font-semibold text-gray-900">ARMAN AMAN</span>
                         </div>
                       </div>
@@ -539,12 +473,11 @@ export default function AddSchoolPage() {
         {/* Permissions Section */}
         <div className="p-6">
           <h2 className="text-lg font-semibold text-blue-600 mb-6">Permissions</h2>
-
           <div className="grid grid-cols-4 gap-6">
             {/* Layout Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                Select Layout of ID Card <span className="text-blue-400">⚡</span>
+                Select Layout of ID Card <span className="text-red-500">*</span>
               </label>
               <div className="space-y-2">
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -573,7 +506,6 @@ export default function AddSchoolPage() {
                 </label>
               </div>
             </div>
-
             {/* Session Display */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
@@ -606,7 +538,6 @@ export default function AddSchoolPage() {
                 </label>
               </div>
             </div>
-
             {/* PDF Download */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
@@ -639,11 +570,10 @@ export default function AddSchoolPage() {
                 </label>
               </div>
             </div>
-
             {/* ID Card Number Type */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                ID Cards No type <span className="text-blue-400">⚡</span>
+                ID Cards No type <span className="text-red-500">*</span>
               </label>
               <div className="space-y-2">
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -673,8 +603,6 @@ export default function AddSchoolPage() {
               </div>
             </div>
           </div>
-
-          {/* Session Dropdown */}
           <div className="mt-6">
             <label htmlFor="session" className="block text-sm font-medium text-gray-700 mb-2">
               Session
@@ -693,9 +621,7 @@ export default function AddSchoolPage() {
               <option value="2025-2026">2025-2026</option>
             </select>
           </div>
-
-          {/* Action Buttons */}
-          <div className="flex justify-end gap-4 mt-8">
+          <div className="flex justify-end gap-4 mt-4">
             <button
               type="button"
               onClick={handleReset}
@@ -728,9 +654,9 @@ export default function AddSchoolPage() {
         }}
       />
       {/* Footer */}
-        <div className="text-center text-sm text-gray-500">
-          2025 © Wezant. Design & Developed by ❤️ Zenoids
-        </div>
+      <div className="text-center text-sm text-gray-500 mt-8">
+
+      </div>
     </div>
   );
 }

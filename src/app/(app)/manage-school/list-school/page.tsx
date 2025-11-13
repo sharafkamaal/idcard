@@ -114,7 +114,6 @@ export default function ListSchoolPage() {
           Dashboards / Manage Schools / <span className="text-gray-900 font-medium">List Schools</span>
         </p>
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-gray-800">List Schools</h1>
           <button
             onClick={() => router.push('/manage-school/add-school')}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -137,7 +136,7 @@ export default function ListSchoolPage() {
             </button>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="w-full">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
