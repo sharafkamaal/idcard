@@ -6,7 +6,9 @@ const prisma = new PrismaClient();
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
+    // Validate required fields or handle optional fields as needed here
+
     const school = await prisma.school.create({
       data: {
         schoolType: body.schoolType,
@@ -29,6 +31,15 @@ export async function POST(request: NextRequest) {
         pdfDownloadAccess: body.pdfDownloadAccess,
         idCardsNoType: body.idCardsNoType,
         session: body.session,
+        branches: {
+          create: (body.branches || []).map((branch: any) => ({
+            name: branch.name,
+            address: branch.address,
+          })),
+        },
+      },
+      include: {
+        branches: true,
       },
     });
 
@@ -46,6 +57,7 @@ export async function GET() {
   try {
     const schools = await prisma.school.findMany({
       orderBy: { createdAt: 'desc' },
+      include: { branches: true },
     });
 
     return NextResponse.json({ success: true, data: schools });

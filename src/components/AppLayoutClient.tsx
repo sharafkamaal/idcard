@@ -5,6 +5,7 @@ import Sidebar from '@/components/Sidebar';
 import { Menu, Bell, User, ChevronDown, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Toaster } from "@/components/ui/toaster";
 import { cn } from '@/lib/utils';
 
 export default function AppLayoutClient({
@@ -93,6 +94,7 @@ export default function AppLayoutClient({
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50">
           {children}
         </main>
+        <Toaster />
       </div>
     </div>
   );

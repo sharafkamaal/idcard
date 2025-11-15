@@ -3,7 +3,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Eye, Edit, Trash2, AlertCircle } from 'lucide-react';
+import { Eye, Edit, Trash2, AlertCircle, List, CreditCard } from 'lucide-react';
+import VerticalIdCard from '@/components/id-cards/VerticalIdCard';
+import HorizontalIdCard from '@/components/id-cards/HorizontalIdCard';
 
 interface School {
   id: string;
@@ -16,6 +18,7 @@ interface School {
   verified: boolean;
   session?: string;
   createdAt: string;
+  logo?: string;
 }
 
 export default function ListSchoolPage() {
@@ -23,6 +26,7 @@ export default function ListSchoolPage() {
   const [schools, setSchools] = useState<School[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [viewMode, setViewMode] = useState('list'); // 'list' or 'card'
 
   const fetchSchools = async () => {
     setLoading(true);

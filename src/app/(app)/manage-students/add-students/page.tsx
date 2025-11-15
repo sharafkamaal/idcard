@@ -6,10 +6,19 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Camera, AlertCircle, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import VerticalIdCard from '@/components/id-cards/VerticalIdCard';
+import HorizontalIdCard from '@/components/id-cards/HorizontalIdCard';
 
 interface School {
   id: string;
   schoolName: string;
+  logoUrl?: string;
+  idCardDesignUrl?: string;
+  selectLayoutOfIdCard?: string;
+  sessionDisplayOnCard?: boolean;
+  pdfDownloadAccess?: boolean;
+  idCardsNoType?: string;
+  session?: string;
 }
 
 export default function AddStudentPage() {
@@ -38,6 +47,7 @@ export default function AddStudentPage() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [schools, setSchools] = useState<School[]>([]);
+  const [selectedSchoolDesign, setSelectedSchoolDesign] = useState<School | null>(null);
 
   const photoInputRef = useRef<HTMLInputElement>(null);
 
@@ -52,7 +62,9 @@ export default function AddStudentPage() {
       if (data.success) {
         setSchools(data.data);
         if (data.data.length > 0) {
-          setFormData(prev => ({ ...prev, schoolId: data.data[0].id }));
+          const defaultSchool = data.data[0];
+          setFormData(prev => ({ ...prev, schoolId: defaultSchool.id }));
+          setSelectedSchoolDesign(defaultSchool);
         }
       }
     } catch (error) {
@@ -70,6 +82,12 @@ export default function AddStudentPage() {
       setFormData(prev => ({ ...prev, [name]: target.checked }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
+    }
+
+    // Update selected school design when school changes
+    if (name === 'schoolId') {
+      const selectedSchool = schools.find(school => school.id === value);
+      setSelectedSchoolDesign(selectedSchool || null);
     }
 
     // Clear error when user starts typing
@@ -179,6 +197,7 @@ export default function AddStudentPage() {
   };
 
   const handleReset = () => {
+    const defaultSchool = schools[0];
     setFormData({
       firstName: '',
       lastName: '',
@@ -193,20 +212,21 @@ export default function AddStudentPage() {
       section: '',
       parentGuardianName: '',
       parentPhone: '',
-      schoolId: schools[0]?.id || '',
+      schoolId: defaultSchool?.id || '',
       status: 'ACTIVE',
       verified: false,
     });
+    setSelectedSchoolDesign(defaultSchool || null);
     setPhotoPreview('');
     setPhotoFile(null);
     setErrors({});
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 py-6 md:py-10 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 py-4 md:py-4 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
-        <div className="mb-6">
+        <div className="mb-3">
           <p className="text-sm text-gray-600">
             Dashboards / Manage Students /{' '}
             <span className="text-gray-900 font-semibold">Add Student</span>
@@ -216,7 +236,7 @@ export default function AddStudentPage() {
         {/* Main Form Container */}
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Student Profile Section */}
-          <div className="p-6 md:p-8 lg:p-10 border-b border-gray-200">
+          <div className="p-3 md:p-4 lg:p-5 border-b border-gray-200">
             <h2 className="text-xl md:text-2xl font-bold text-blue-600 mb-8 flex items-center gap-3">
               <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
                 <span className="text-blue-600 text-lg">📋</span>
@@ -226,7 +246,7 @@ export default function AddStudentPage() {
 
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 lg:gap-10">
               {/* Left Column - Photo & QR Code */}
-              <div className="xl:col-span-3 flex flex-col gap-8">
+              <div className="xl:col-span-2 flex flex-col gap-8">
                 {/* Photo Upload */}
                 <div className="flex flex-col items-center">
                   <div className="relative w-40 h-48 rounded-xl border-4 border-gray-200 flex items-center justify-center bg-white overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
@@ -294,7 +314,7 @@ export default function AddStudentPage() {
               </div>
 
               {/* Middle Column - Form Fields */}
-              <div className="xl:col-span-6 space-y-6">
+              <div className="xl:col-span-5 space-y-5">
                 {/* Student Full Name */}
                 <div>
                   <label
@@ -619,39 +639,68 @@ export default function AddStudentPage() {
               </div>
 
               {/* Right Column - ID Card Preview */}
-              <div className="xl:col-span-3">
+              <div className="flex-1 space-y-1">
                 <div className="flex flex-col items-center sticky top-6">
                   <h3 className="text-sm font-bold text-gray-800 mb-4">
                     Your School ID Card Design
                   </h3>
                   <div className="w-64 h-80 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50 p-6 shadow-inner">
-                    <div className="text-center">
-                      <div className="w-36 h-56 mx-auto bg-gradient-to-b from-purple-300 via-blue-300 to-blue-400 rounded-xl shadow-xl flex flex-col items-center justify-start p-4">
-                        <div className="text-purple-800 font-bold text-xs mb-3">
-                          SCHOOL NAME
-                        </div>
-                        {photoPreview ? (
-                          <div className="w-20 h-24 bg-white rounded-lg mb-3 overflow-hidden shadow-md">
-                            <Image
-                              src={photoPreview}
-                              alt="Student"
-                              width={80}
-                              height={96}
-                              className="object-cover"
-                            />
+                    {selectedSchoolDesign ? (
+                      selectedSchoolDesign.selectLayoutOfIdCard === 'horizontal_id' ? (
+                        <HorizontalIdCard
+                          schoolName={selectedSchoolDesign.schoolName || 'School Name'}
+                          logoUrl={selectedSchoolDesign.logoUrl}
+                          studentPhotoUrl={photoPreview}
+                          designUrl={selectedSchoolDesign.idCardDesignUrl}
+                          studentName={`${formData.firstName} ${formData.lastName}`.trim() || 'STUDENT NAME'}
+                          rollNumber={formData.rollNumber || 'N/A'}
+                          fatherName={formData.fatherName || 'FATHER NAME'}
+                        />
+                      ) : (
+                        <VerticalIdCard
+                          schoolName={selectedSchoolDesign.schoolName || 'School Name'}
+                          logoUrl={selectedSchoolDesign.logoUrl}
+                          studentPhotoUrl={photoPreview}
+                          designUrl={selectedSchoolDesign.idCardDesignUrl}
+                          studentName={`${formData.firstName} ${formData.lastName}`.trim() || 'STUDENT NAME'}
+                          rollNumber={formData.rollNumber || 'N/A'}
+                          fatherName={formData.fatherName || 'FATHER NAME'}
+                        />
+                      )
+                    ) : (
+                      <div className="text-center">
+                        <div className="w-36 h-56 mx-auto bg-gradient-to-b from-purple-300 via-blue-300 to-blue-400 rounded-xl shadow-xl flex flex-col items-center justify-start p-4">
+                          <div className="text-purple-800 font-bold text-xs mb-3">
+                            SCHOOL NAME
                           </div>
-                        ) : (
-                          <div className="w-20 h-24 bg-white rounded-lg mb-3 shadow-md"></div>
-                        )}
-                        <div className="text-xs font-bold text-gray-900">
-                          {formData.firstName || 'STUDENT NAME'}
-                        </div>
-                        <div className="text-xs text-gray-800 mt-1.5">
-                          Roll: {formData.rollNumber || 'N/A'}
+                          {photoPreview ? (
+                            <div className="w-20 h-24 bg-white rounded-lg mb-3 overflow-hidden shadow-md">
+                              <Image
+                                src={photoPreview}
+                                alt="Student"
+                                width={80}
+                                height={96}
+                                className="object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-20 h-24 bg-white rounded-lg mb-3 shadow-md"></div>
+                          )}
+                          <div className="text-xs font-bold text-gray-900">
+                            {formData.firstName || 'STUDENT NAME'}
+                          </div>
+                          <div className="text-xs text-gray-800 mt-1.5">
+                            Roll: {formData.rollNumber || 'N/A'}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
+                  {!selectedSchoolDesign && (
+                    <p className="text-xs text-gray-500 mt-3 text-center">
+                      Select a school to see the ID card design
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
