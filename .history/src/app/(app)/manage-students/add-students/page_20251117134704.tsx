@@ -639,7 +639,7 @@ export default function AddStudentPage() {
               </div>
 
               {/* Right Column - ID Card Preview */}
-              <div className="xl:col-span-5 space-y-5">
+              <div className="flex- space-y-2">
                 <div className="flex flex-col items-center sticky top-6">
                   <h3 className="text-sm font-bold text-gray-800 mb-4">
                     Your School ID Card Design

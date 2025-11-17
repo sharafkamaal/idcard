@@ -244,7 +244,7 @@ export default function AddStudentPage() {
               Student Profile
             </h2>
 
-            <div className="grid grid-cols-2 xl:grid-cols-12 gap-8 lg:gap-10">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 lg:gap-10">
               {/* Left Column - Photo & QR Code */}
               <div className="xl:col-span-2 flex flex-col gap-8">
                 {/* Photo Upload */}
@@ -639,7 +639,7 @@ export default function AddStudentPage() {
               </div>
 
               {/* Right Column - ID Card Preview */}
-              <div className="xl:col-span-5 space-y-5">
+              <div className="flex-2 space-y-1">
                 <div className="flex flex-col items-center sticky top-6">
                   <h3 className="text-sm font-bold text-gray-800 mb-4">
                     Your School ID Card Design
