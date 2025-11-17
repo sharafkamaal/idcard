@@ -4,7 +4,7 @@ import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import IdCardPreviewModal from '@/components/IdCardPreviewModal';
-import { MultiBranchFields } from '@/components/id-cards/MultiBranchFields';
+import { MultiBranchFields } from '@/components';
 export default function AddSchoolPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
