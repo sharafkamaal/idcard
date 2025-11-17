@@ -184,13 +184,13 @@ export default function AddSchoolPage() {
             </div>
 
             {/* Middle Column - Form Fields */}
-            <div className="flex-1 space-y-1.5">
+            <div className="flex-2 space-y-2">
               <div className="grid grid-cols-2 gap-1">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     School Type <span className="text-red-500">*</span>
                   </label>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="radio"
@@ -222,7 +222,7 @@ export default function AddSchoolPage() {
                 {formData.schoolType === 'multiBranch' && (
                   <div className="col-span-2 mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <h3 className="text-md font-semibold text-blue-700 mb-4">Multi Branch Details</h3>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="headOfficeAddress" className="block text-sm font-medium text-gray-700 mb-2">
                           Head Office Address <span className="text-red-500">*</span>
@@ -233,7 +233,7 @@ export default function AddSchoolPage() {
                           name="headOfficeAddress"
                           value={formData.headOfficeAddress}
                           onChange={handleChange}
-                          className="w-full px-2 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder="Enter head office address"
                           required={formData.schoolType === 'multiBranch'}
                         />
@@ -249,7 +249,7 @@ export default function AddSchoolPage() {
                           value={formData.numBranches}
                           onChange={handleChange}
                           min={2}
-                          className="w-full px-2 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder="Enter number of branches"
                           required={formData.schoolType === 'multiBranch'}
                         />

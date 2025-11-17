@@ -249,7 +249,7 @@ export default function AddSchoolPage() {
                           value={formData.numBranches}
                           onChange={handleChange}
                           min={2}
-                          className="w-full px-2 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px- py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder="Enter number of branches"
                           required={formData.schoolType === 'multiBranch'}
                         />
