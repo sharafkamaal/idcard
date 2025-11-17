@@ -263,7 +263,5 @@ export default function StudentListPage() {
         </div>
 
         
-      </div>
-    </div>
   );
 }

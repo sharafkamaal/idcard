@@ -96,7 +96,7 @@ export default function StudentListPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb- flex items-center justify-between">
           <div>
             <div className="text-sm text-gray-500 mb-1">
               Dashboards / Manage Students / List Students
@@ -262,7 +262,10 @@ export default function StudentListPage() {
           )}
         </div>
 
-        
+        {/* Footer */}
+        <div className="text-center text-sm text-gray-500">
+          2025 © Wezant. Design & Developed by ❤️ Zenoids
+        </div>
       </div>
     </div>
   );
