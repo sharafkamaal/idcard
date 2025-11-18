@@ -1,7 +1,7 @@
 // src/app/(app)/manage-students/add/page.tsx
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Camera, AlertCircle, Loader2 } from 'lucide-react';
@@ -40,14 +40,26 @@ export default function AddStudentPage() {
     schoolId: '',
     status: 'ACTIVE' as 'ACTIVE' | 'INACTIVE',
     verified: false,
+    photoUrl: '', // Integrated photo into form state
   });
 
-  const [photoPreview, setPhotoPreview] = useState('');
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [schools, setSchools] = useState<School[]>([]);
   const [selectedSchoolDesign, setSelectedSchoolDesign] = useState<School | null>(null);
+
+  // Memoized preview data for optimized re-renders
+  const previewData = useMemo(() => ({
+    studentName: `${formData.firstName} ${formData.lastName}`.trim() || 'STUDENT NAME',
+    rollNumber: formData.rollNumber || 'N/A',
+    fatherName: formData.fatherName || 'FATHER NAME',
+    photoUrl: formData.photoUrl,
+    schoolName: selectedSchoolDesign?.schoolName || 'School Name',
+    logoUrl: selectedSchoolDesign?.logoUrl,
+    designUrl: selectedSchoolDesign?.idCardDesignUrl,
+    layout: selectedSchoolDesign?.selectLayoutOfIdCard,
+  }), [formData.firstName, formData.lastName, formData.rollNumber, formData.fatherName, formData.photoUrl, selectedSchoolDesign]);
 
   const photoInputRef = useRef<HTMLInputElement>(null);
 
@@ -116,7 +128,8 @@ export default function AddStudentPage() {
     setPhotoFile(file);
     const reader = new FileReader();
     reader.onloadend = () => {
-      setPhotoPreview(reader.result as string);
+      const result = reader.result as string;
+      setFormData(prev => ({ ...prev, photoUrl: result }));
     };
     reader.readAsDataURL(file);
 
@@ -168,7 +181,10 @@ export default function AddStudentPage() {
       const formDataToSend = new FormData();
 
       Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value.toString());
+        // Skip photoUrl as it's only used for preview
+        if (key !== 'photoUrl') {
+          formDataToSend.append(key, value.toString());
+        }
       });
 
       if (photoFile) {
@@ -215,9 +231,9 @@ export default function AddStudentPage() {
       schoolId: defaultSchool?.id || '',
       status: 'ACTIVE',
       verified: false,
+      photoUrl: '',
     });
     setSelectedSchoolDesign(defaultSchool || null);
-    setPhotoPreview('');
     setPhotoFile(null);
     setErrors({});
   };
@@ -250,9 +266,9 @@ export default function AddStudentPage() {
                 {/* Photo Upload */}
                 <div className="flex flex-col items-center">
                   <div className="relative w-40 h-48 rounded-xl border-4 border-gray-200 flex items-center justify-center bg-white overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-                    {photoPreview ? (
+                    {formData.photoUrl ? (
                       <Image
-                        src={photoPreview}
+                        src={formData.photoUrl}
                         alt="Student Photo"
                         fill
                         className="object-cover"
@@ -679,25 +695,25 @@ export default function AddStudentPage() {
                   </h3>
                   <div className="w-64 h-80 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50 p-6 shadow-inner">
                     {selectedSchoolDesign ? (
-                      selectedSchoolDesign.selectLayoutOfIdCard === 'horizontal_id' ? (
+                      previewData.layout === 'horizontal_id' ? (
                         <HorizontalIdCard
-                          schoolName={selectedSchoolDesign.schoolName || 'School Name'}
-                          logoUrl={selectedSchoolDesign.logoUrl}
-                          studentPhotoUrl={photoPreview}
-                          designUrl={selectedSchoolDesign.idCardDesignUrl}
-                          studentName={`${formData.firstName} ${formData.lastName}`.trim() || 'STUDENT NAME'}
-                          rollNumber={formData.rollNumber || 'N/A'}
-                          fatherName={formData.fatherName || 'FATHER NAME'}
+                          schoolName={previewData.schoolName}
+                          logoUrl={previewData.logoUrl}
+                          studentPhotoUrl={previewData.photoUrl}
+                          designUrl={previewData.designUrl}
+                          studentName={previewData.studentName}
+                          rollNumber={previewData.rollNumber}
+                          fatherName={previewData.fatherName}
                         />
                       ) : (
                         <VerticalIdCard
-                          schoolName={selectedSchoolDesign.schoolName || 'School Name'}
-                          logoUrl={selectedSchoolDesign.logoUrl}
-                          studentPhotoUrl={photoPreview}
-                          designUrl={selectedSchoolDesign.idCardDesignUrl}
-                          studentName={`${formData.firstName} ${formData.lastName}`.trim() || 'STUDENT NAME'}
-                          rollNumber={formData.rollNumber || 'N/A'}
-                          fatherName={formData.fatherName || 'FATHER NAME'}
+                          schoolName={previewData.schoolName}
+                          logoUrl={previewData.logoUrl}
+                          studentPhotoUrl={previewData.photoUrl}
+                          designUrl={previewData.designUrl}
+                          studentName={previewData.studentName}
+                          rollNumber={previewData.rollNumber}
+                          fatherName={previewData.fatherName}
                         />
                       )
                     ) : (
@@ -706,10 +722,10 @@ export default function AddStudentPage() {
                           <div className="text-purple-800 font-bold text-xs mb-3">
                             SCHOOL NAME
                           </div>
-                          {photoPreview ? (
+                          {previewData.photoUrl ? (
                             <div className="w-20 h-24 bg-white rounded-lg mb-3 overflow-hidden shadow-md">
                               <Image
-                                src={photoPreview}
+                                src={previewData.photoUrl}
                                 alt="Student"
                                 width={80}
                                 height={96}
@@ -720,10 +736,10 @@ export default function AddStudentPage() {
                             <div className="w-20 h-24 bg-white rounded-lg mb-3 shadow-md"></div>
                           )}
                           <div className="text-xs font-bold text-gray-900">
-                            {formData.firstName || 'STUDENT NAME'}
+                            {previewData.studentName}
                           </div>
                           <div className="text-xs text-gray-800 mt-1.5">
-                            Roll: {formData.rollNumber || 'N/A'}
+                            Roll: {previewData.rollNumber}
                           </div>
                         </div>
                       </div>

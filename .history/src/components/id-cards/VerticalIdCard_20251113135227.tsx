@@ -9,7 +9,7 @@ interface VerticalIdCardProps {
   studentName?: string;
   rollNumber?: string;
   fatherName?: string;
-  designUrl?: string; // Custom ID card design URL passed as prop
+  designUrl?: string;
 }
 
 const VerticalIdCard: React.FC<VerticalIdCardProps> = ({
@@ -25,29 +25,15 @@ const VerticalIdCard: React.FC<VerticalIdCardProps> = ({
     <div className="w-56 h-80 p-3 rounded-3xl bg-white shadow-md border border-gray-100">
       <div className="relative w-full h-full rounded-3xl bg-white overflow-hidden">
         {designUrl ? (
-          // Show uploaded custom design filling the card area with contain to preserve aspect ratio
-          <Image
-            src={designUrl}
-            alt="ID Card Design"
-            width={224}
-            height={320}
-            className="w-full h-full object-contain"
-          />
+          <Image src={designUrl} alt="ID Card Design" width={224} height={320} className="w-full h-full object-contain" />
         ) : (
-          // Default styled layout when no custom design exists
           <>
             <div className="absolute inset-y-0 -left-14 w-40 bg-gradient-to-b from-green-500 via-green-400 to-emerald-300 opacity-80 -skew-x-6"></div>
             <div className="absolute inset-y-0 -right-14 w-40 bg-gradient-to-b from-purple-700 via-purple-500 to-purple-400 opacity-80 skew-x-6"></div>
             <div className="relative z-10 flex flex-col items-center h-full px-5 pt-6 pb-5 gap-4">
               <div className="w-[72px] h-[72px] rounded-full border-[5px] border-green-500 bg-white flex items-center justify-center shadow-md">
                 {logoUrl ? (
-                  <Image
-                    src={logoUrl}
-                    alt="School Logo"
-                    width={68}
-                    height={68}
-                    className="rounded-full object-cover"
-                  />
+                  <Image src={logoUrl} alt="School Logo" width={68} height={68} className="rounded-full object-cover" />
                 ) : (
                   <div className="w-14 h-14 rounded-full bg-gray-200"></div>
                 )}
@@ -60,13 +46,7 @@ const VerticalIdCard: React.FC<VerticalIdCardProps> = ({
               </div>
               <div className="w-28 h-28 rounded-lg border-[5px] border-purple-500 bg-gray-100 flex items-center justify-center shadow-sm overflow-hidden">
                 {studentPhotoUrl ? (
-                  <Image
-                    src={studentPhotoUrl}
-                    alt="Student"
-                    width={96}
-                    height={96}
-                    className="object-cover w-full h-full"
-                  />
+                  <Image src={studentPhotoUrl} alt="Student" width={96} height={96} className="object-cover w-full h-full" />
                 ) : (
                   <div className="w-20 h-20 bg-gray-200"></div>
                 )}

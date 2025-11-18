@@ -267,3 +267,31 @@ export default function StudentListPage() {
     </div>
   );
 }
+
+// validate required fields
+if (!studentData?.schoolId || !studentData?.rollNumber) {
+    return new Response(JSON.stringify({ error: 'schoolId and rollNumber are required' }), { status: 400 });
+}
+
+// pre-check to give a clear 409 for the common case
+const existing = await prisma.student.findFirst({
+    where: { schoolId: studentData.schoolId, rollNumber: studentData.rollNumber },
+});
+if (existing) {
+    return new Response(JSON.stringify({ error: 'A student with this roll number already exists in the school.' }), { status: 409 });
+}
+
+try {
+    const student = await prisma.student.create({
+        data: studentData,
+        include: { school: true },
+    });
+    return new Response(JSON.stringify(student), { status: 201 });
+} catch (err: any) {
+    // handle concurrent race where another request inserted the same composite key
+    if (err?.code === 'P2002') {
+        return new Response(JSON.stringify({ error: 'Unique constraint failed: student with this roll number already exists.' }), { status: 409 });
+    }
+    console.error('Error creating student:', err);
+    return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
+}
