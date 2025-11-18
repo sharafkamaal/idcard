@@ -90,7 +90,7 @@ export default function VerticalIdCard({
         )}
 
         {/* Details */}
-        <div className="w-40 mx-auto flex flex-col items-start justify-start pl-2 pr-2 pt-36 space-y-0.5">
+        <div className="w-40 mx-auto flex flex-col items-start justify-start pl-2 pr-2 pt-38 space-y-0.5">
 
           <p className="text-sm font-bold text-gray-900 leading-tight">
             {studentName}
