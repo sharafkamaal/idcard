@@ -34,7 +34,7 @@ export default function HorizontalIdCard({
           className="object-cover"
         />
       )}
-
+      
       {/* Content Overlay */}
       <div className="absolute inset-0 flex items-center justify-between p-4 bg-black/5">
         {/* Left Section - Photo */}

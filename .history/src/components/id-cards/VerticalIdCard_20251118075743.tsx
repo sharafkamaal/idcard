@@ -34,7 +34,7 @@ export default function VerticalIdCard({
           className="object-cover"
         />
       )}
-
+      
       {/* Content Overlay */}
       <div className="absolute inset-0 flex flex-col items-center justify-start p-4 bg-black/5">
         {/* Logo */}
