@@ -715,8 +715,8 @@ export default function AddStudentPage() {
                           section={formData.section}
                           parentGuardianName={formData.parentGuardianName}
                           parentPhone={formData.parentPhone}
-                          status={formData.status}
                           
+                          verified={formData.verified}
                         />
 
                       )

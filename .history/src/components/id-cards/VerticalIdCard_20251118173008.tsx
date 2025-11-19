@@ -19,7 +19,7 @@ interface VerticalIdCardProps {
   parentGuardianName?: string;
   parentPhone?: string;
   status?: string;
-  verified?: boolean;
+  
 }
 
 export default function VerticalIdCard({
@@ -77,7 +77,7 @@ export default function VerticalIdCard({
 
         {/* Student Photo */}
         {studentPhotoUrl && (
-          <div className="w-28 h-3 rounded-md mb-3 bg-white overflow-hidden shadow-md border-2 border-blue-700">
+          <div className="w-28 h-32 rounded-md mb-3 bg-white overflow-hidden shadow-md border-2 border-blue-700">
             <Image
               src={studentPhotoUrl}
               alt="Student"
@@ -146,7 +146,16 @@ export default function VerticalIdCard({
             </p>
           )}
 
-          
+          {status && (
+            <p className="text-[11px] text-gray-700 leading-tight">
+              Status: <span className="font-medium">{status}</span>
+            </p>
+          )}
+
+          <p className="text-[11px] text-gray-700 leading-tight">
+            Verified: <span className="font-medium">{verified ? "Yes" : "No"}</span>
+          </p>
+
         </div> {/* <- details div close */}
 
       </div> {/* <- overlay close */}

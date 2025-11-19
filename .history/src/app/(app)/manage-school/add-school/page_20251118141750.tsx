@@ -452,30 +452,26 @@ export default function AddSchoolPage() {
                     logoUrl={logoPreview}
                     studentPhotoUrl={idCardPreview}
                     designUrl={idCardPreview}
-                    studentName="STUDENT NAME"
-                    rollNumber="ROLL NO"
-                    fatherName="FATHER'S NAME"
                   />
-
                 ) : (
                   <VerticalIdCard
-                    schoolName={formData.schoolName || 'School Name'}
-                    logoUrl={logoPreview || ''}
-                    designUrl={idCardPreview || ''}
-                    studentPhotoUrl={idCardPreview || ''}
-                    studentName="STUDENT NAME"
-                    rollNumber="ROLL NO"
-                    fatherName="FATHER'S NAME"
-                    dob="DD/MM/YYYY"
-                    gender="Gender"
-                    bloodGroup="Blood"
-                    classValue="Class"
-                    section="Section"
-                    parentGuardianName="Guardian"
-                    parentPhone="Phone"
-                    status="Active"
-                    verified={false}
-                  />
+  schoolName={selectedSchoolDesign?.schoolName || ''}
+  logoUrl={selectedSchoolDesign?.logoUrl}
+  designUrl={selectedSchoolDesign?.idCardDesignUrl}
+  studentPhotoUrl={formData.photoUrl}
+  studentName={`${formData.firstName} ${formData.lastName}`}
+  rollNumber={formData.rollNumber}
+  fatherName={formData.fatherName}
+  dob={formData.dob}
+  gender={formData.gender}
+  bloodGroup={formData.bloodGroup}
+  classValue={formData.class}
+  section={formData.section}
+  parentGuardianName={formData.parentGuardianName}
+  parentPhone={formData.parentPhone}
+  status={formData.status}
+  verified={formData.verified}
+/>
 
                 )}
                 <p className="text-xs text-gray-500 mt-3 text-center">Upload a student photo to preview inside the card</p>

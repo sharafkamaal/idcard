@@ -452,11 +452,7 @@ export default function AddSchoolPage() {
                     logoUrl={logoPreview}
                     studentPhotoUrl={idCardPreview}
                     designUrl={idCardPreview}
-                    studentName="STUDENT NAME"
-                    rollNumber="ROLL NO"
-                    fatherName="FATHER'S NAME"
                   />
-
                 ) : (
                   <VerticalIdCard
                     schoolName={formData.schoolName || 'School Name'}

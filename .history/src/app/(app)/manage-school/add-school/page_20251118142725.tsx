@@ -448,14 +448,14 @@ export default function AddSchoolPage() {
                 <h3 className="text-sm font-semibold text-gray-800 mb-4">Live ID Card Preview</h3>
                 {formData.selectLayoutOfIdCard === 'horizontal_id' ? (
                   <HorizontalIdCard
-                    schoolName={formData.schoolName || 'School Name'}
-                    logoUrl={logoPreview}
-                    studentPhotoUrl={idCardPreview}
-                    designUrl={idCardPreview}
-                    studentName="STUDENT NAME"
-                    rollNumber="ROLL NO"
-                    fatherName="FATHER'S NAME"
-                  />
+  schoolName={formData.schoolName || 'School Name'}
+  logoUrl={logoPreview}
+  studentPhotoUrl={idCardPreview}
+  designUrl={idCardPreview}
+  studentName="STUDENT NAME"
+  rollNumber="ROLL NO"
+  fatherName="FATHER'S NAME"
+/>
 
                 ) : (
                   <VerticalIdCard

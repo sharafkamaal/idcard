@@ -347,8 +347,9 @@ export default function AddStudentPage() {
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleChange}
-                        className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${errors.firstName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
-                          }`}
+                        className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                          errors.firstName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
+                        }`}
                         placeholder="First Name"
                         required
                       />
@@ -366,8 +367,9 @@ export default function AddStudentPage() {
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleChange}
-                        className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${errors.lastName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
-                          }`}
+                        className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                          errors.lastName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
+                        }`}
                         placeholder="Last Name"
                         required
                       />
@@ -412,8 +414,9 @@ export default function AddStudentPage() {
                       name="rollNumber"
                       value={formData.rollNumber}
                       onChange={handleChange}
-                      className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${errors.rollNumber ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
-                        }`}
+                      className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        errors.rollNumber ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
+                      }`}
                       placeholder="Roll Number"
                       required
                     />
@@ -519,8 +522,9 @@ export default function AddStudentPage() {
                       name="class"
                       value={formData.class}
                       onChange={handleChange}
-                      className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${errors.class ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
-                        }`}
+                      className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        errors.class ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
+                      }`}
                       placeholder="Class"
                       required
                     />
@@ -584,8 +588,9 @@ export default function AddStudentPage() {
                       name="parentPhone"
                       value={formData.parentPhone}
                       onChange={handleChange}
-                      className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${errors.parentPhone ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
-                        }`}
+                      className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        errors.parentPhone ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
+                      }`}
                       placeholder="10 digit phone number"
                     />
                     {errors.parentPhone && (
@@ -661,8 +666,9 @@ export default function AddStudentPage() {
                     name="schoolId"
                     value={formData.schoolId}
                     onChange={handleChange}
-                    className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${errors.schoolId ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
-                      }`}
+                    className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                      errors.schoolId ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
+                    }`}
                     required
                   >
                     <option value="">Select a school</option>
@@ -701,23 +707,23 @@ export default function AddStudentPage() {
                         />
                       ) : (
                         <VerticalIdCard
-                          schoolName={selectedSchoolDesign?.schoolName || ''}
-                          logoUrl={selectedSchoolDesign?.logoUrl}
-                          designUrl={selectedSchoolDesign?.idCardDesignUrl}
-                          studentPhotoUrl={formData.photoUrl}
-                          studentName={`${formData.firstName} ${formData.lastName}`}
-                          rollNumber={formData.rollNumber}
-                          fatherName={formData.fatherName}
-                          dob={formData.dob}
-                          gender={formData.gender}
-                          bloodGroup={formData.bloodGroup}
-                          classValue={formData.class}
-                          section={formData.section}
-                          parentGuardianName={formData.parentGuardianName}
-                          parentPhone={formData.parentPhone}
-                          status={formData.status}
-                          
-                        />
+  schoolName={selectedSchoolDesign?.schoolName || ''}
+  logoUrl={selectedSchoolDesign?.logoUrl}
+  designUrl={selectedSchoolDesign?.idCardDesignUrl}
+  studentPhotoUrl={formData.photoUrl}
+  studentName={`${formData.firstName} ${formData.lastName}`}
+  rollNumber={formData.rollNumber}
+  fatherName={formData.fatherName}
+  dob={formData.dob}
+  gender={formData.gender}
+  bloodGroup={formData.bloodGroup}
+  classValue={formData.class}
+  section={formData.section}
+  parentGuardianName={formData.parentGuardianName}
+  parentPhone={formData.parentPhone}
+  status={formData.status}
+  verified={formData.verified}
+/>
 
                       )
                     ) : (
@@ -759,7 +765,7 @@ export default function AddStudentPage() {
             </div>
           </div>
 
-          {/* School Selection */}
+{/* School Selection */}
           <div className="p-6 md:p-8 lg:p-10 border-b border-gray-200 bg-gray-50">
             <h2 className="text-xl md:text-2xl font-bold text-blue-600 mb-8 flex items-center gap-3">
               <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -780,8 +786,9 @@ export default function AddStudentPage() {
                 name="schoolId"
                 value={formData.schoolId}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${errors.schoolId ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
-                  }`}
+                className={`w-full px-4 py-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                  errors.schoolId ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
+                }`}
                 required
               >
                 <option value="">Select a school</option>

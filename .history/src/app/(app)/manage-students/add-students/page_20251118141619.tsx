@@ -701,10 +701,10 @@ export default function AddStudentPage() {
                         />
                       ) : (
                         <VerticalIdCard
-                          schoolName={selectedSchoolDesign?.schoolName || ''}
-                          logoUrl={selectedSchoolDesign?.logoUrl}
-                          designUrl={selectedSchoolDesign?.idCardDesignUrl}
+                          schoolName={formData.schoolName}
+                          logoUrl={formData.logoUrl}
                           studentPhotoUrl={formData.photoUrl}
+                          designUrl={formData.designUrl}
                           studentName={`${formData.firstName} ${formData.lastName}`}
                           rollNumber={formData.rollNumber}
                           fatherName={formData.fatherName}
@@ -716,7 +716,7 @@ export default function AddStudentPage() {
                           parentGuardianName={formData.parentGuardianName}
                           parentPhone={formData.parentPhone}
                           status={formData.status}
-                          
+                          verified={formData.verified}
                         />
 
                       )
