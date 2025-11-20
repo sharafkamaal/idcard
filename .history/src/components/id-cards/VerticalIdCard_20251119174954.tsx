@@ -110,19 +110,15 @@ export default function VerticalIdCard({
             </p>
           )}
 
-          {(gender || bloodGroup) && (
+          {gender && (
             <p className="text-[11px] text-gray-700 leading-tight">
-              {gender && (
-                <>
-                  Gender: <span className="font-medium">{gender}</span>
-                </>
-              )}
-              {gender && bloodGroup && <span className="mx-1">|</span>}
-              {bloodGroup && (
-                <>
-                  Blood: <span className="font-medium">{bloodGroup}</span>
-                </>
-              )}
+              Gender: <span className="font-medium">{gender}</span>
+            </p>
+          )}
+
+          {bloodGroup && (
+            <p className="text-[11px] text-gray-700 leading-tight">
+              Blood: <span className="font-medium">{bloodGroup}</span>
             </p>
           )}
 
