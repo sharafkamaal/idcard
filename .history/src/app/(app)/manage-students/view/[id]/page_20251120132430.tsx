@@ -3,8 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import VerticalIdCard from '@/components/id-cards/VerticalIdCard';
-import HorizontalIdCard from '@/components/id-cards/HorizontalIdCard';
 
 interface StudentData {
   id: string;
@@ -33,13 +31,6 @@ interface StudentData {
     phoneNo: string;
     email: string;
     website: string;
-    logoUrl: string;
-    idCardDesignUrl: string;
-    selectLayoutOfIdCard: string;
-    sessionDisplayOnCard: boolean;
-    pdfDownloadAccess: boolean;
-    idCardsNoType: string;
-    session: string;
   };
 }
 
@@ -317,43 +308,45 @@ export default function StudentViewPage() {
           {/* Right Section - ID Card Preview */}
           <div className="lg:col-span-1">
             <div className="sticky top-6">
-              <h3 className="text-lg font-semibold mb-4">
-                {student.school.selectLayoutOfIdCard === 'horizontal_id' ? 'Horizontal' : 'Vertical'} ID Card
-              </h3>
-              {student.school.selectLayoutOfIdCard === 'horizontal_id' ? (
-                <HorizontalIdCard
-                  schoolName={student.school.schoolName}
-                  logoUrl={student.school.logoUrl}
-                  studentPhotoUrl={student.photoUrl}
-                  designUrl={student.school.idCardDesignUrl}
-                  studentName={fullName}
-                  rollNumber={student.rollNumber}
-                  fatherName={student.fatherName}
-                />
-              ) : (
-                <VerticalIdCard
-                  schoolName={student.school.schoolName}
-                  logoUrl={student.school.logoUrl}
-                  studentPhotoUrl={student.photoUrl}
-                  designUrl={student.school.idCardDesignUrl}
-                  studentName={fullName}
-                  rollNumber={student.rollNumber}
-                  fatherName={student.fatherName}
-                  dob={new Date(student.dob).toLocaleDateString('en-GB', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                  })}
-                  gender={student.gender}
-                  bloodGroup={student.bloodGroup}
-                  classValue={student.class}
-                  section={student.section}
-                  parentGuardianName={student.parentGuardianName}
-                  parentPhone={student.parentPhone}
-                  status={student.status}
-                  verified={student.verified}
-                />
-              )}
+              <h3 className="text-lg font-semibold mb-4">Horizontal</h3>
+              <div className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-xl p-6 text-white text-center border-4 border-dashed border-white shadow-xl">
+                {/* School Logo */}
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 border-4 border-purple-800">
+                  <span className="text-2xl font-bold text-purple-700">S</span>
+                </div>
+                {/* School Name */}
+                <div className="text-red-400 font-bold text-lg mb-4">
+                  {student.school.schoolName.toUpperCase()}
+                </div>
+                {/* Student Photo */}
+                <div className="relative w-24 h-24 bg-green-100 rounded-lg mx-auto mb-3 border-2 border-white overflow-hidden">
+                  {student.photoUrl ? (
+                    <Image
+                      src={student.photoUrl}
+                      alt={fullName}
+                      fill
+                      sizes="96px"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-3xl text-gray-500">
+                      👤
+                    </div>
+                  )}
+                </div>
+                {/* Student Info */}
+                <div className="text-xs mb-1 font-semibold">STUDENT ID: {student.rollNumber}</div>
+                <div className="text-sm font-bold mb-1">STUDENT NAME</div>
+                <div className="text-xs mb-2">
+                  Father&apos;s Name : <span className="font-semibold">{student.fatherName}</span>
+                </div>
+                <div className="text-xs">
+                  Class Name : <span className="font-semibold">{student.class}</span>
+                </div>
+                <div className="text-xs">
+                  Class Roll : <span className="font-semibold">{student.rollNumber}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -2,13 +2,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-// GET: Fetch single student by id
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params; // Await params here
+    
     const student = await prisma.student.findUnique({
       where: { id },
       include: {
@@ -22,13 +22,6 @@ export async function GET(
             phoneNo: true,
             email: true,
             website: true,
-            logoUrl: true,
-            idCardDesignUrl: true,
-            selectLayoutOfIdCard: true,
-            sessionDisplayOnCard: true,
-            pdfDownloadAccess: true,
-            idCardsNoType: true,
-            session: true,
           },
         },
       },
@@ -51,16 +44,15 @@ export async function GET(
   }
 }
 
-// PUT: update student (with photo upload support)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params; // Await params here
     const formData = await request.formData();
-
-    // Handle uploaded photo
+    
+    // Extract file
     const photoFile = formData.get('photo') as File | null;
     let photoUrl: string | undefined;
 
@@ -81,12 +73,13 @@ export async function PUT(
         );
       }
 
+      // Convert to base64 for storage
       const bytes = await photoFile.arrayBuffer();
       const buffer = Buffer.from(bytes);
       photoUrl = `data:${photoFile.type};base64,${buffer.toString('base64')}`;
     }
 
-    // Build update data
+    // Extract form data
     const data: any = {
       firstName: formData.get('firstName') as string,
       lastName: formData.get('lastName') as string,
@@ -131,6 +124,7 @@ export async function PUT(
         { status: 409 }
       );
     }
+
     return NextResponse.json(
       { success: false, error: error.message || 'Failed to update student' },
       { status: 500 }
@@ -138,14 +132,13 @@ export async function PUT(
   }
 }
 
-// DELETE: remove student by id
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
-
+    const { id } = await params; // Await params here
+    
     await prisma.student.delete({
       where: { id },
     });

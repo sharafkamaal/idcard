@@ -139,7 +139,7 @@ export default function ReportsPage() {
         {/* Header */}
         <div className="mb-6">
           <div className="text-sm text-gray-500 mb-2">Dashboard / Reports</div>
-          
+          <h1 className="text-2xl font-semibold">REPORTS</h1>
         </div>
 
         {/* Export Cards */}
@@ -311,7 +311,10 @@ export default function ReportsPage() {
           </div>
         )}
 
-        
+        {/* Footer */}
+        <div className="text-center text-sm text-gray-500 mt-8">
+          2025 © Wezant. Design & Develop by ❤️ Zenoids
+        </div>
       </div>
     </div>
   );

@@ -3,8 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import VerticalIdCard from '@/components/id-cards/VerticalIdCard';
-import HorizontalIdCard from '@/components/id-cards/HorizontalIdCard';
 
 interface StudentData {
   id: string;
@@ -33,13 +31,6 @@ interface StudentData {
     phoneNo: string;
     email: string;
     website: string;
-    logoUrl: string;
-    idCardDesignUrl: string;
-    selectLayoutOfIdCard: string;
-    sessionDisplayOnCard: boolean;
-    pdfDownloadAccess: boolean;
-    idCardsNoType: string;
-    session: string;
   };
 }
 
@@ -77,18 +68,15 @@ export default function StudentViewPage() {
     window.print();
   };
 
-  // UPDATED: Use JSON instead of FormData for PUT
   const handleSubmit = async () => {
     try {
-      const data = {
-        status: printStatus,
-        verified: verifyStatus === 'Verified',
-      };
+      const formData = new FormData();
+      formData.append('status', printStatus);
+      formData.append('verified', verifyStatus === 'Verified' ? 'true' : 'false');
 
       const response = await fetch(`/api/students/${params.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: formData,
       });
 
       if (response.ok) {
@@ -214,6 +202,7 @@ export default function StudentViewPage() {
                       <label className="text-sm text-gray-500">S/o, D/o :</label>
                       <p className="font-medium text-gray-800">{student.fatherName}</p>
                     </div>
+
                     <div>
                       <label className="text-sm text-gray-500">DOB :</label>
                       <p className="font-medium text-gray-800">
@@ -224,22 +213,27 @@ export default function StudentViewPage() {
                         })}
                       </p>
                     </div>
+
                     <div>
                       <label className="text-sm text-gray-500">Gender :</label>
                       <p className="font-medium text-gray-800">{student.gender}</p>
                     </div>
+
                     <div>
                       <label className="text-sm text-gray-500">Blood Group :</label>
                       <p className="font-medium text-gray-800">{student.bloodGroup}</p>
                     </div>
+
                     <div>
                       <label className="text-sm text-gray-500">Roll No :</label>
                       <p className="font-medium text-gray-800">{student.rollNumber}</p>
                     </div>
+
                     <div>
                       <label className="text-sm text-gray-500">Class :</label>
                       <p className="font-medium text-gray-800">{student.class}</p>
                     </div>
+
                     <div>
                       <label className="text-sm text-gray-500">Section :</label>
                       <p className="font-medium text-gray-800">{student.section}</p>
@@ -286,6 +280,7 @@ export default function StudentViewPage() {
             <div className="no-print bg-white rounded-lg shadow p-6 mt-6">
               <div className="flex items-center gap-6">
                 <span className="text-gray-700 font-medium">Status</span>
+                
                 <select
                   value={printStatus}
                   onChange={(e) => setPrintStatus(e.target.value)}
@@ -295,6 +290,7 @@ export default function StudentViewPage() {
                   <option value="Printed">Printed</option>
                   <option value="Not Printed">Not Printed</option>
                 </select>
+
                 <select
                   value={verifyStatus}
                   onChange={(e) => setVerifyStatus(e.target.value)}
@@ -304,6 +300,7 @@ export default function StudentViewPage() {
                   <option value="Verified">Verified</option>
                   <option value="Not Verified">Not Verified</option>
                 </select>
+
                 <button
                   onClick={handleSubmit}
                   className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
@@ -317,43 +314,48 @@ export default function StudentViewPage() {
           {/* Right Section - ID Card Preview */}
           <div className="lg:col-span-1">
             <div className="sticky top-6">
-              <h3 className="text-lg font-semibold mb-4">
-                {student.school.selectLayoutOfIdCard === 'horizontal_id' ? 'Horizontal' : 'Vertical'} ID Card
-              </h3>
-              {student.school.selectLayoutOfIdCard === 'horizontal_id' ? (
-                <HorizontalIdCard
-                  schoolName={student.school.schoolName}
-                  logoUrl={student.school.logoUrl}
-                  studentPhotoUrl={student.photoUrl}
-                  designUrl={student.school.idCardDesignUrl}
-                  studentName={fullName}
-                  rollNumber={student.rollNumber}
-                  fatherName={student.fatherName}
-                />
-              ) : (
-                <VerticalIdCard
-                  schoolName={student.school.schoolName}
-                  logoUrl={student.school.logoUrl}
-                  studentPhotoUrl={student.photoUrl}
-                  designUrl={student.school.idCardDesignUrl}
-                  studentName={fullName}
-                  rollNumber={student.rollNumber}
-                  fatherName={student.fatherName}
-                  dob={new Date(student.dob).toLocaleDateString('en-GB', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                  })}
-                  gender={student.gender}
-                  bloodGroup={student.bloodGroup}
-                  classValue={student.class}
-                  section={student.section}
-                  parentGuardianName={student.parentGuardianName}
-                  parentPhone={student.parentPhone}
-                  status={student.status}
-                  verified={student.verified}
-                />
-              )}
+              <h3 className="text-lg font-semibold mb-4">Horizontal</h3>
+              <div className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-xl p-6 text-white text-center border-4 border-dashed border-white shadow-xl">
+                {/* School Logo */}
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 border-4 border-purple-800">
+                  <span className="text-2xl font-bold text-purple-700">S</span>
+                </div>
+
+                {/* School Name */}
+                <div className="text-red-400 font-bold text-lg mb-4">
+                  {student.school.schoolName.toUpperCase()}
+                </div>
+
+                {/* Student Photo */}
+                <div className="relative w-24 h-24 bg-green-100 rounded-lg mx-auto mb-3 border-2 border-white overflow-hidden">
+                  {student.photoUrl ? (
+                    <Image
+                      src={student.photoUrl}
+                      alt={fullName}
+                      fill
+                      sizes="96px"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-3xl text-gray-500">
+                      👤
+                    </div>
+                  )}
+                </div>
+
+                {/* Student Info */}
+                <div className="text-xs mb-1 font-semibold">STUDENT ID: {student.rollNumber}</div>
+                <div className="text-sm font-bold mb-1">STUDENT NAME</div>
+                <div className="text-xs mb-2">
+                  Father&apos;s Name : <span className="font-semibold">{student.fatherName}</span>
+                </div>
+                <div className="text-xs">
+                  Class Name : <span className="font-semibold">{student.class}</span>
+                </div>
+                <div className="text-xs">
+                  Class Roll : <span className="font-semibold">{student.rollNumber}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -365,12 +367,12 @@ export default function StudentViewPage() {
           .no-print {
             display: none !important;
           }
-
+          
           body {
             print-color-adjust: exact;
             -webkit-print-color-adjust: exact;
           }
-
+          
           @page {
             margin: 1cm;
           }
