@@ -5,10 +5,10 @@ import { prisma } from '@/lib/prisma';
 // GET: Fetch single student by id
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const student = await prisma.student.findUnique({
       where: { id },
       include: {
@@ -54,10 +54,10 @@ export async function GET(
 // PUT: update student (with photo upload support)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const formData = await request.formData();
 
     // Handle uploaded photo
@@ -141,10 +141,10 @@ export async function PUT(
 // DELETE: remove student by id
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     await prisma.student.delete({
       where: { id },

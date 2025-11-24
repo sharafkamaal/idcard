@@ -384,7 +384,7 @@ export default function AddStudentPage() {
                 {/* Father's Name */}
                 <div>
                   <label htmlFor="fatherName" className="block text-sm font-semibold text-gray-700 mb-1.5">
-                    Father's Name
+                    Father&apos;s Name
                   </label>
                   <input
                     id="fatherName"

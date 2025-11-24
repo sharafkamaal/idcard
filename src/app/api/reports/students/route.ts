@@ -23,13 +23,9 @@ export async function GET(request: NextRequest) {
       rollNumber: student.rollNumber,
       studentName: `${student.firstName} ${student.lastName}`,
       idCardsStatus: student.status || 'Not Printed',
-      lastExport: new Date().toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      }),
+      lastExport: new Date().toLocaleDateString('en-GB'),
       verified: student.verified,
-      schoolLocation: `${student.school.city}`,
+      schoolLocation: `${student.school.city || ''}`,
     }));
 
     return NextResponse.json({ success: true, data: studentReports });
